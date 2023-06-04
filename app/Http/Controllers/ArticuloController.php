@@ -122,11 +122,29 @@ class ArticuloController extends Controller
     public function getProveedores(Request $request)
     {
         $comprador = $request->input('compr',-1);
-        $proveedores = DB::table('cprprv')
+        $usuario = $request->input('usr',-1);
+        $puesto = 'admin';
+        if(strtoupper($usuario) != 'PYC'){
+            $user = UserMKS::where('nom_cto', $usuario)->first();
+            $usuario = $user->nom_cto;
+            $puesto = $user->puesto;
+        }
+        if(str_contains($puesto, 'COMPRAS')){
+            $proveedores = DB::table('cprprv')
                             ->select('proveedor', 'nom')
                             ->where('modulo','P')
                             ->where('comprador',$comprador)
                             ->get();
+        }
+
+        else{
+            $proveedores = DB::table('cprprv')
+                            ->select('proveedor', 'nom')
+                            ->where('modulo','P')
+                            //->where('comprador',$comprador)
+                            ->get();
+        }
+        
         return response()->json($proveedores);
     }
 
@@ -134,18 +152,37 @@ class ArticuloController extends Controller
     public function getAcuerdos(Request $request){
         $comprador = $request->input('compr',-1);
         $proveedor = $request->input('prov','00');
+        $usuario = $request->input('usr','-1');
         /*$apoyos = DB::table('Rca_ApoyosDir')
                         ->select(DB::raw('Folio + \'*\' as Folio,
                         Comprador, Nombre, Linea1, \'APOYOS DIRECCION\' as boletin, fecApoyo as Fecha'))
                         ->where('Comprador',$comprador);
                         */
 
-        $acuerdos = DB::table('Rca_Acuerdos')
+        $puesto = 'admin';
+        if(strtoupper($usuario) != 'PYC'){
+            $user = UserMKS::where('nom_cto', $usuario)->first();
+            $usuario = $user->nom_cto;
+            $puesto = $user->puesto;
+        }
+        if(str_contains($puesto, 'COMPRAS')){
+           $acuerdos = DB::table('Rca_Acuerdos')
                         ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
                         //->union($apoyos)
                         ->where('Comprador',$comprador)
                         ->where('Clave', $proveedor)
                         ->get();
+        }
+
+        else{
+            $acuerdos = DB::table('Rca_Acuerdos')
+                        ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
+                        //->union($apoyos)
+                        //->where('Comprador',$comprador)
+                        ->where('Clave', $proveedor)
+                        ->get();
+        }
+        
         return response()->json($acuerdos);
     }
 

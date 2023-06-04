@@ -751,4 +751,40 @@ class PromocionController extends Controller
         return response()->json($promocion_pyc);
 
     }
+
+    public function getAutorizadas(Request $request){
+        $comprador = $request->input('compr', "-1");
+        $usuario = UserMKS::where('nom_cto', $comprador)->first();
+        if(strtoupper($comprador) != 'PYC' && is_null($usuario)){
+            return response()->json(array(
+                    'code'      =>  421,
+                    'message'   =>  'Usuario no encontrado',
+                    'error'     =>  'Usuario no encontrado',
+                ), 421);
+        }
+        $puesto = 'COMPRAS';
+        if(strtoupper($comprador) != 'PYC'){
+            $puesto = $usuario->puesto;   
+        }else{
+            $puesto = 'COMPRASJE';   
+        }
+        if(str_contains($puesto, 'COMPRASJE') || str_contains($puesto, 'TRADEMKT') || strtoupper($comprador) == 'PYC'){
+            $promociones = PromocionPYC::where('pyc_prmhdr.status', 1)
+                        ->leftJoin('cprprv', 'pyc_prmhdr.proveedor','=','cprprv.proveedor')
+                        ->select('pyc_prmhdr.*','cprprv.nom as nom_prov')
+                        ->orderByDesc('updated_at')
+                        ->get()
+                        ->toArray();
+        }
+        else {
+            $promociones = PromocionPYC::where('pyc_prmhdr.status', 1)->where('u_alt',$comprador)
+                        ->leftJoin('cprprv', 'pyc_prmhdr.proveedor','=','cprprv.proveedor')
+                        ->select('pyc_prmhdr.*','cprprv.nom as nom_prov')
+                        ->orderByDesc('updated_at')
+                        ->get()
+                        ->toArray();
+        }
+        
+        return response()->json($promociones);
+    }
 }

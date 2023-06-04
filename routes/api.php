@@ -49,3 +49,6 @@ Route::post('/aut-prom', [App\Http\Controllers\PromocionController::class, 'crea
 
 
 Route::post('/rechazar-prom', [App\Http\Controllers\PromocionController::class, 'denegarProm']);
+
+//Autorizadas
+Route::get('/autorizadas', [App\Http\Controllers\PromocionController::class, 'getAutorizadas']);
