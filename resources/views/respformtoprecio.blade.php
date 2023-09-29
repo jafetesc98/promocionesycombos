@@ -10,7 +10,6 @@
     <div class="panel" style="width:814px; height:1056px; border:0px;">
         <div class="panel" style="width:814px; height:1025px; border:0px;">
             <div class="panel-body">
-                @for ($i = 0; $i < $numHojas; $i++)
                 <table style="font-size:10px; border: 0px;" >
                     
                     <tr style="border: 0px;">
@@ -114,37 +113,32 @@
                         <td style="width:15px;" align="center" class="margen"></td>-->
                     </tr>
                 
-                    {{--@foreach ($arts as $art)--}}
-                    @for ($j = $i*9; $j < (($i+1) * 9); $j++)
-                    @if($j == $total)
-                    
-                    @break
-                    @endif
+                    @foreach ($arts as $art)
                     <!--Hasta aqui vamos aqui flta imprimir precios-->
-                    <tr>
+                   <tr>
                         <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <td align="center"><b>{{$arts[$j]['cve_art']}}</b></td>
-                        <td align="center" rowspan="5" colspan="4" style="font-size:9px"><b>{{$arts[$j]['des_art']}}</b></td>
-                        <td align="center">{{$arts[$j]['cant_pre0']}}</td>
-                        <td align="center">${{number_format($arts[$j]['precio_vta0'], 2, '.', '')}}</td>
+                        <td align="center"><b>{{$art['cve_art']}}</b></td>
+                        <td align="center" rowspan="5" colspan="4" style="font-size:9px"><b>{{$art['des_art']}}</b></td>
+                        <td align="center">{{$art['cant_pre0']}}</td>
+                        <td align="center">${{number_format($art['precio_vta0'], 2, '.', '')}}</td>
                         
-                        @if($arts[$j]['precio_vta0'] != $arts[$j]['precio_0'])
-                        <td align="center">${{number_format($arts[$j]['precio_0'], 2, '.', '')}}</td>
+                        @if($art['precio_vta0'] != $art['precio_0'])
+                        <td align="center">${{number_format($art['precio_0'], 2, '.', '')}}</td>
                         @else
                         <td align="center">------</td>
                         @endif
                         
                     
-                        @if((doubleval($arts[$j]['precio_vta0']) - doubleval($arts[$j]['precio_0'])) == 0)
+                        @if((doubleval($art['precio_vta0']) - doubleval($art['precio_0'])) == 0)
                         <td align="center">------</td>
                         @else
-                        <td align="center">${{number_format(($arts[$j]['precio_vta0'] - $arts[$j]['precio_0']), 2, '.','')}} </td>
+                        <td align="center">${{number_format(($art['precio_vta0'] - $art['precio_0']), 2, '.','')}} </td>
                         @endif
                         
                         
-                        @if(doubleval(100 - (($arts[$j]['precio_0'] * 100 ) / $arts[$j]['precio_vta0']) != 0))
+                        @if(doubleval(100 - (($art['precio_0'] * 100 ) / $art['precio_vta0']) != 0))
                         <td align="center">
-                        {{number_format(100 - (($arts[$j]['precio_0'] * 100 ) / $arts[$j]['precio_vta0']), 2, '.', '')}} %</td>
+                        {{number_format(100 - (($art['precio_0'] * 100 ) / $art['precio_vta0']), 2, '.', '')}} %</td>
                         @else
                         <td align="center">------</td>
                         @endif
@@ -158,25 +152,27 @@
                         <!--<td style="width:15px;" align="center" class="margen"></td>-->
                         <td rowspan="4" colspan="1" align="center"></td>
                         
-                        <td align="center">{{$arts[$j]['cant_pre1']}}</td>
-                        <td align="center">${{number_format($arts[$j]['precio_vta1'], 2, '.', '')}}</td>
+                        <td align="center">{{$art['cant_pre1']}}</td>
+                        <td align="center">${{number_format($art['precio_vta1'], 2, '.', '')}}</td>
                         
-                        @if($arts[$j]['precio_vta1'] != $arts[$j]['precio_1'])
-                        <td align="center">${{number_format($arts[$j]['precio_1'], 2, '.', '')}}</td>
+                        @if($art['precio_vta1'] != $art['precio_1'])
+                        <td align="center">${{number_format($art['precio_1'], 2, '.', '')}}</td>
                         @else
                         <td align="center">------</td>
                         @endif
 
 
-                        @if((doubleval($arts[$j]['precio_vta1']) - doubleval($arts[$j]['precio_1'])) == 0)
+                        @if((doubleval($art['precio_vta1']) - doubleval($art['precio_1'])) == 0)
                         <td align="center">------</td>
                         @else
-                        <td align="center">${{number_format(($arts[$j]['precio_vta1'] - $arts[$j]['precio_1']), 2, '.','')}} </td>
+                        <td align="center">${{number_format(($art['precio_vta1'] - $art['precio_1']), 2, '.','')}} </td>
                         @endif
                         
+                        <!--<td align="center">${{number_format(($art['precio_vta1'] - $art['precio_1']), 2, '.','') }}</td>-->
                         
-                        @if(doubleval(100 - (($arts[$j]['precio_1'] * 100 ) / $arts[$j]['precio_vta1']) != 0))
-                        <td align="center">{{number_format(100 - (($arts[$j]['precio_1'] * 100 ) / $arts[$j]['precio_vta1']), 2, '.', '')}} %</td>
+                        <!--<td align="center">{{number_format(100 - (($art['precio_1'] * 100 ) / $art['precio_vta1']), 2, '.', '')}} %</td>-->
+                        @if(doubleval(100 - (($art['precio_1'] * 100 ) / $art['precio_vta1']) != 0))
+                        <td align="center">{{number_format(100 - (($art['precio_1'] * 100 ) / $art['precio_vta1']), 2, '.', '')}} %</td>
                         @else
                         <td align="center"> ------ </td>
                         @endif
@@ -185,81 +181,86 @@
                     </tr>
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <td align="center">{{$arts[$j]['cant_pre2']}}</td>
-                        <td align="center">${{number_format($arts[$j]['precio_vta2'], 2, '.', '')}}</td>
+                        <td align="center">{{$art['cant_pre2']}}</td>
+                        <td align="center">${{number_format($art['precio_vta2'], 2, '.', '')}}</td>
                         
-                        @if($arts[$j]['precio_vta2'] != $arts[$j]['precio_2'])
-                        <td align="center">${{number_format($arts[$j]['precio_2'], 2, '.', '')}}</td>
+                        @if($art['precio_vta2'] != $art['precio_2'])
+                        <td align="center">${{number_format($art['precio_2'], 2, '.', '')}}</td>
                         @else
                         <td align="center">------</td>
                         @endif
 
-                        @if((doubleval($arts[$j]['precio_vta2']) - doubleval($arts[$j]['precio_2'])) == 0)
+                        @if((doubleval($art['precio_vta2']) - doubleval($art['precio_2'])) == 0)
                         <td align="center"> ------ </td>
                         @else
                         <td align="center">
-                        ${{number_format(($arts[$j]['precio_vta2'] - $arts[$j]['precio_2']), 2, '.','')}}</td>
+                        ${{number_format(($art['precio_vta2'] - $art['precio_2']), 2, '.','')}}</td>
                         @endif
 
-                        {{-- --
-                        <td align="center">${{number_format(($art['precio_vta2'] - $art['precio_2']), 2, '.','') }}</td>-- --}}
+                        <!--
+                        <td align="center">${{number_format(($art['precio_vta2'] - $art['precio_2']), 2, '.','') }}</td>-->
                         
+                        <!--<td align="center">{{number_format(100 - (($art['precio_2'] * 100 ) / $art['precio_vta2']), 2, '.', '')}} %</td>-->
                         
-                        @if(doubleval(100 - (($arts[$j]['precio_2'] * 100 ) / $arts[$j]['precio_vta2']) != 0))
+                        @if(doubleval(100 - (($art['precio_2'] * 100 ) / $art['precio_vta2']) != 0))
                         <td align="center">
-                        {{number_format(100 - (($arts[$j]['precio_2'] * 100 ) / $arts[$j]['precio_vta2']), 2, '.', '')}} %</td>
+                        {{number_format(100 - (($art['precio_2'] * 100 ) / $art['precio_vta2']), 2, '.', '')}} %</td>
                         @else <td align="center"> ------ </td>
                         @endif
                         
                     </tr>
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <td align="center">{{$arts[$j]['cant_pre3']}}</td>
-                        <td align="center">${{number_format($arts[$j]['precio_vta3'], 2, '.', '')}}</td>
-                        @if($arts[$j]['precio_vta3'] != $arts[$j]['precio_3'])
-                        <td align="center">${{number_format($arts[$j]['precio_3'], 2, '.', '')}}</td>
+                        <td align="center">{{$art['cant_pre3']}}</td>
+                        <td align="center">${{number_format($art['precio_vta3'], 2, '.', '')}}</td>
+                        @if($art['precio_vta3'] != $art['precio_3'])
+                        <td align="center">${{number_format($art['precio_3'], 2, '.', '')}}</td>
                         @else
                          <td align="center">------</td>
                         @endif
                         
                         
-                       
-                        @if((doubleval($arts[$j]['precio_vta3']) - doubleval($arts[$j]['precio_3'])) == 0)
+                        <!--<td align="center">${{number_format(($art['precio_vta3'] - $art['precio_3']), 2, '.','') }}</td>-->
+
+                        @if((doubleval($art['precio_vta3']) - doubleval($art['precio_3'])) == 0)
                         <td align="center"> ------ </td>
                         @else
                         <td align="center">
-                        ${{number_format(($arts[$j]['precio_vta3'] - $arts[$j]['precio_3']), 2, '.','')}}</td>
+                        ${{number_format(($art['precio_vta3'] - $art['precio_3']), 2, '.','')}}</td>
                         @endif
                         
-                        
-                        @if(doubleval(100 - (($arts[$j]['precio_3'] * 100 ) / $arts[$j]['precio_vta3']) != 0))
+                        <!--<td align="center">{{number_format(100 - (($art['precio_3'] * 100 ) / $art['precio_vta3']), 2, '.', '')}} %</td>-->
+                        @if(doubleval(100 - (($art['precio_3'] * 100 ) / $art['precio_vta3']) != 0))
                         <td align="center">
-                        {{number_format(100 - (($arts[$j]['precio_3'] * 100 ) / $arts[$j]['precio_vta3']), 2, '.', '')}} %</td>
+                        {{number_format(100 - (($art['precio_3'] * 100 ) / $art['precio_vta3']), 2, '.', '')}} %</td>
                         @else
                         <td align="center"> ------ </td>
                         @endif
                     </tr>
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <td align="center">{{$arts[$j]['cant_pre4']}}</td>
-                        <td align="center">${{number_format($arts[$j]['precio_vta4'], 2, '.', '')}}</td>
-                        @if($arts[$j]['precio_vta4'] != $arts[$j]['precio_4'])
-                        <td align="center">${{number_format($arts[$j]['precio_4'], 2, '.', '')}}</td>
+                        <td align="center">{{$art['cant_pre4']}}</td>
+                        <td align="center">${{number_format($art['precio_vta4'], 2, '.', '')}}</td>
+                        @if($art['precio_vta4'] != $art['precio_4'])
+                        <td align="center">${{number_format($art['precio_4'], 2, '.', '')}}</td>
                         @else
                          <td align="center">------</td>
                         @endif
                         
+                        <!--<td align="center">${{number_format(($art['precio_vta4'] - $art['precio_4']), 2, '.','') }}</td>-->
 
-                        @if((doubleval($arts[$j]['precio_vta4']) - doubleval($arts[$j]['precio_4'])) == 0)
+                        @if((doubleval($art['precio_vta4']) - doubleval($art['precio_4'])) == 0)
                         <td align="center"> ------ </td>
                         @else
                         <td align="center">
-                        ${{number_format(($arts[$j]['precio_vta4'] - $arts[$j]['precio_4']), 2, '.','')}}</td>
+                        ${{number_format(($art['precio_vta4'] - $art['precio_4']), 2, '.','')}}</td>
                         @endif
                         
-                        @if(doubleval(100 - (($arts[$j]['precio_4'] * 100 ) / $arts[$j]['precio_vta4']) != 0))
+                        <!--<td align="center">{{number_format(100 - (($art['precio_4'] * 100 ) / $art['precio_vta4']), 2, '.', '')}} %</td>-->
+
+                        @if(doubleval(100 - (($art['precio_4'] * 100 ) / $art['precio_vta4']) != 0))
                         <td align="center">
-                        {{number_format(100 - (($arts[$j]['precio_4'] * 100 ) / $arts[$j]['precio_vta4']), 2, '.', '')}} %</td>
+                        {{number_format(100 - (($art['precio_4'] * 100 ) / $art['precio_vta4']), 2, '.', '')}} %</td>
 
                         @else
                          <td align="center"> ------ </td>
@@ -270,7 +271,7 @@
                             .
                         </td>
                     </tr>
-                    @endfor
+                    @endforeach
                     <!--aqui termino un for-->
         
                     <tr style="border: 0;">
@@ -279,13 +280,16 @@
                         </td>
                     </tr>
 
-                     <tr style="border: 0;">
+                    <tr style="border: 0;">
                         <td style="border: 0; font-size:3px" colspan="11" class="saltos">
                             .
                         </td>
                     </tr>
-
-                    
+                    <tr style="border: 0;">
+                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
+                            .
+                        </td>
+                    </tr>
                     <tr style="border: 0;">
                         <td colspan="3" class="saltos" align="center" style="height:5px; border: 0;">___________________________</td>
                         <td colspan="4" class="saltos" align="center" style="height:5px; border: 0;">___________________________</td>
@@ -304,16 +308,16 @@
 
 
                 </table>
-                <p style="margin: 0; padding:0; border:0px; font-family: monospace; font-size: 13px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Página {{$i+1}} de {{$numHojas}}</p>
-                @if($i +1 != $numHojas )
-                <div class="page-break"></div>
-                @endif
-                @endfor
                 
             </div>
         </div>
-    </div>
-        
+        <p style="margin: 0; padding:0; border:0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Páginas '.($i+1).' de '.$hojas.'.</p>
+        </div>
+
+
+
+
+
         <style>@page {
         
          margin: 0;
@@ -322,7 +326,7 @@
         table{
             table-layout: fixed;
             width:750px;
-            margin: 35px 50px 30px 50px;
+            margin: 50px;
             border: 0.5px solid #000;
             font-family: monospace;
         }
@@ -359,9 +363,6 @@
         h2,p{
             margin-top: 0px;
             margin-bottom: 2px;
-        }
-        .page-break {
-            page-break-after: always;
         }
         </style>
 </body>

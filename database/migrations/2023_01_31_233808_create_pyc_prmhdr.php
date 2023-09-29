@@ -17,7 +17,7 @@ class CreatePycPrmhdr extends Migration
             $table->id();
             $table->integer('status');
             $table->string('numProm',10);
-            $table->string('desProm',60);
+            $table->char('desProm',60);
             $table->string('fec_ini',8);
             $table->string('fec_fin',8);
             $table->string('hra_ini',8);

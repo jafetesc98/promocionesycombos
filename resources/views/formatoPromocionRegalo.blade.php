@@ -18,7 +18,7 @@
                         <b><h2>FORMATO DE OFERTAS Y PROMOCIONES</h2></b>
                         <!--<p>'.$preciosImprimir[0]["tipo"].': ID('.$preciosImprimir[0]["idtemp"].')</p>-->
                         
-                        <p><b>PROMOCIÓN DE PRECIO : ID({{$prom['id']}})</b></p>
+                        <p><b>PROMOCIÓN MERCANCÍA SIN CARGO : ID({{$prom['id']}})</b></p>
                         
                         </td>
                         <td colspan="2" align="center" id="2">
@@ -46,7 +46,7 @@
                             PAGAN AMBOS
                             @endif
                         </td>
-                        <td style="width:15px;" align="center" class="margen"></td>
+                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
                     </tr>
 
                     
@@ -76,12 +76,12 @@
                         <!--<td style="width:15px;" align="center" class="margen"> </td>-->
                         <td scope="col" rowspan="2" align="center" style="background-color: #ccc">PARA</td>
                         <td scope="col"  align="center" colspan="9" style="max-width:650px; border-bottom: 0;">{{implode(", ", $sucs)}}</td>
-                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
+                        <td style="width:15px;" align="center" class="margen"></td>
                     </tr>
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"> </td>-->
                          <td scope="col" align="center" colspan="9" style="max-width:650px; border-top: 0;"></td>
-                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
+                        <td style="width:15px;" align="center" class="margen"></td>
                     </tr>
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"> </td>-->
@@ -93,183 +93,57 @@
                         
                         <td scope="col" align="center" colspan="3"><?php if($prom['indicador']==0){echo 'BAJA DE PRECIO';}else{echo 'PROMOCION';}; ?></td>
                         
-                        <td style="width:15px;" align="center" class="margen"></td>
+                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
                     </tr>
                     <tr>
-                        <td style="border: 0; font-size:3px" colspan="12" class="saltos">
+                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
                             <br>
                         </td>
                     </tr>
-
-                    <tr>
-                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <th scope="col" align="center" style="background-color: #ccc">CODIGO</th>
-                        <th scope="col" align="center" colspan="4" style="background-color: #ccc">DESCRIPCIÓN</th>
-                        <th scope="col" align="center" style="background-color: #ccc" colspan="2">PRECIO CAT ART</th>
-                        <th scope="col" align="center" style="background-color: #ccc">PRECIO DE OFTA</th>
-                        <th scope="col" align="center" style="background-color: #ccc">DIFERENCIA</th>
-                        <th scope="col" align="center" style="background-color: #ccc">% DESCUENTO</th>
-                        <!--<th scope="col" align="center" style="background-color: #ccc">PRECIO OFTA</th>
-                        <th scope="col" align="center" style="background-color: #ccc">DIFERENCIA</th>
-                        <td style="width:15px;" align="center" class="margen"></td>-->
-                    </tr>
                 
-                    {{--@foreach ($arts as $art)--}}
-                    @for ($j = $i*9; $j < (($i+1) * 9); $j++)
-                    @if($j == $total)
-                    
-                    @break
-                    @endif
-                    <!--Hasta aqui vamos aqui flta imprimir precios-->
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"></td>-->
+                        <th scope="col" align="center" style="background-color: #ccc" colspan="2">COMPRANDO</th>
+                        <th scope="col" align="center" colspan="3" style="background-color: #ccc">DE LA CVE</th>
+                        <th scope="col" align="center" style="background-color: #ccc" colspan="2">SE REGALAN</th>
+                        <th scope="col" align="center" colspan="3" style="background-color: #ccc">DE LA CLAVE</th>
+                    </tr>
+
+
+
+
+
+
+                    {{--@foreach ($arts as $art)--}}
+                    @for ($j = $i*32; $j < (($i+1) * 32); $j++)
+                        @if($j == $total)
+                        
+                        @break
+                        @endif
+                    <!--Hasta aqui vamos aqui flta imprimir precios-->
+                   <tr>
+                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
+                        <td align="center"><b>{{intval($arts[$j]['cobradas'])}}</b></td>
+                        <td align="center"><b>PZS</b></td>
                         <td align="center"><b>{{$arts[$j]['cve_art']}}</b></td>
-                        <td align="center" rowspan="5" colspan="4" style="font-size:9px"><b>{{$arts[$j]['des_art']}}</b></td>
-                        <td align="center">{{$arts[$j]['cant_pre0']}}</td>
-                        <td align="center">${{number_format($arts[$j]['precio_vta0'], 2, '.', '')}}</td>
+                        <td align="center" colspan="2" style="font-size:9px"><b>{{$arts[$j]['des_art']}}</b></td>
+                        <td align="center">{{intval($arts[$j]['regaladas'])}}</td>
+                        <td align="center">{{$arts[$j]['emp_reg']}}</td>
                         
-                        @if($arts[$j]['precio_vta0'] != $arts[$j]['precio_0'])
-                        <td align="center">${{number_format($arts[$j]['precio_0'], 2, '.', '')}}</td>
-                        @else
-                        <td align="center">------</td>
-                        @endif
+                        <td align="center">{{$arts[$j]['art_reg']}}</td>
                         
-                    
-                        @if((doubleval($arts[$j]['precio_vta0']) - doubleval($arts[$j]['precio_0'])) == 0)
-                        <td align="center">------</td>
-                        @else
-                        <td align="center">${{number_format(($arts[$j]['precio_vta0'] - $arts[$j]['precio_0']), 2, '.','')}} </td>
-                        @endif
-                        
-                        
-                        @if(doubleval(100 - (($arts[$j]['precio_0'] * 100 ) / $arts[$j]['precio_vta0']) != 0))
-                        <td align="center">
-                        {{number_format(100 - (($arts[$j]['precio_0'] * 100 ) / $arts[$j]['precio_vta0']), 2, '.', '')}} %</td>
-                        @else
-                        <td align="center">------</td>
-                        @endif
+                        <td align="center" colspan="2">{{$arts[$j]['desc_reg']}}</td>
                         
                         <!--<td align="center">'.$preciosImprimir[$registrosimpresos]["segundoPrecio_ofer0"].'</td>
                         <td align="center">'.$preciosImprimir[$registrosimpresos]["segundaDifer0"].'</td>
                         <td style="width:15px;" align="center" class="margen"></td>-->
+
+                        <tr style="border: 0;">
+                            <td style="border: 0; background-color: #E2E2E2; font-size:3px" colspan="10" class="saltos">
+                            .</td>
+                        </tr>
                     </tr>
                     
-                    <tr>
-                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <td rowspan="4" colspan="1" align="center"></td>
-                        
-                        <td align="center">{{$arts[$j]['cant_pre1']}}</td>
-                        <td align="center">${{number_format($arts[$j]['precio_vta1'], 2, '.', '')}}</td>
-                        
-                        @if($arts[$j]['precio_vta1'] != $arts[$j]['precio_1'])
-                        <td align="center">${{number_format($arts[$j]['precio_1'], 2, '.', '')}}</td>
-                        @else
-                        <td align="center">------</td>
-                        @endif
-
-
-                        @if((doubleval($arts[$j]['precio_vta1']) - doubleval($arts[$j]['precio_1'])) == 0)
-                        <td align="center">------</td>
-                        @else
-                        <td align="center">${{number_format(($arts[$j]['precio_vta1'] - $arts[$j]['precio_1']), 2, '.','')}} </td>
-                        @endif
-                        
-                        
-                        @if(doubleval(100 - (($arts[$j]['precio_1'] * 100 ) / $arts[$j]['precio_vta1']) != 0))
-                        <td align="center">{{number_format(100 - (($arts[$j]['precio_1'] * 100 ) / $arts[$j]['precio_vta1']), 2, '.', '')}} %</td>
-                        @else
-                        <td align="center"> ------ </td>
-                        @endif
-                        
-
-                    </tr>
-                    <tr>
-                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <td align="center">{{$arts[$j]['cant_pre2']}}</td>
-                        <td align="center">${{number_format($arts[$j]['precio_vta2'], 2, '.', '')}}</td>
-                        
-                        @if($arts[$j]['precio_vta2'] != $arts[$j]['precio_2'])
-                        <td align="center">${{number_format($arts[$j]['precio_2'], 2, '.', '')}}</td>
-                        @else
-                        <td align="center">------</td>
-                        @endif
-
-                        @if((doubleval($arts[$j]['precio_vta2']) - doubleval($arts[$j]['precio_2'])) == 0)
-                        <td align="center"> ------ </td>
-                        @else
-                        <td align="center">
-                        ${{number_format(($arts[$j]['precio_vta2'] - $arts[$j]['precio_2']), 2, '.','')}}</td>
-                        @endif
-
-                        {{-- --
-                        <td align="center">${{number_format(($art['precio_vta2'] - $art['precio_2']), 2, '.','') }}</td>-- --}}
-                        
-                        
-                        @if(doubleval(100 - (($arts[$j]['precio_2'] * 100 ) / $arts[$j]['precio_vta2']) != 0))
-                        <td align="center">
-                        {{number_format(100 - (($arts[$j]['precio_2'] * 100 ) / $arts[$j]['precio_vta2']), 2, '.', '')}} %</td>
-                        @else <td align="center"> ------ </td>
-                        @endif
-                        
-                    </tr>
-                    <tr>
-                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <td align="center">{{$arts[$j]['cant_pre3']}}</td>
-                        <td align="center">${{number_format($arts[$j]['precio_vta3'], 2, '.', '')}}</td>
-                        @if($arts[$j]['precio_vta3'] != $arts[$j]['precio_3'])
-                        <td align="center">${{number_format($arts[$j]['precio_3'], 2, '.', '')}}</td>
-                        @else
-                         <td align="center">------</td>
-                        @endif
-                        
-                        
-                       
-                        @if((doubleval($arts[$j]['precio_vta3']) - doubleval($arts[$j]['precio_3'])) == 0)
-                        <td align="center"> ------ </td>
-                        @else
-                        <td align="center">
-                        ${{number_format(($arts[$j]['precio_vta3'] - $arts[$j]['precio_3']), 2, '.','')}}</td>
-                        @endif
-                        
-                        
-                        @if(doubleval(100 - (($arts[$j]['precio_3'] * 100 ) / $arts[$j]['precio_vta3']) != 0))
-                        <td align="center">
-                        {{number_format(100 - (($arts[$j]['precio_3'] * 100 ) / $arts[$j]['precio_vta3']), 2, '.', '')}} %</td>
-                        @else
-                        <td align="center"> ------ </td>
-                        @endif
-                    </tr>
-                    <tr>
-                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <td align="center">{{$arts[$j]['cant_pre4']}}</td>
-                        <td align="center">${{number_format($arts[$j]['precio_vta4'], 2, '.', '')}}</td>
-                        @if($arts[$j]['precio_vta4'] != $arts[$j]['precio_4'])
-                        <td align="center">${{number_format($arts[$j]['precio_4'], 2, '.', '')}}</td>
-                        @else
-                         <td align="center">------</td>
-                        @endif
-                        
-
-                        @if((doubleval($arts[$j]['precio_vta4']) - doubleval($arts[$j]['precio_4'])) == 0)
-                        <td align="center"> ------ </td>
-                        @else
-                        <td align="center">
-                        ${{number_format(($arts[$j]['precio_vta4'] - $arts[$j]['precio_4']), 2, '.','')}}</td>
-                        @endif
-                        
-                        @if(doubleval(100 - (($arts[$j]['precio_4'] * 100 ) / $arts[$j]['precio_vta4']) != 0))
-                        <td align="center">
-                        {{number_format(100 - (($arts[$j]['precio_4'] * 100 ) / $arts[$j]['precio_vta4']), 2, '.', '')}} %</td>
-
-                        @else
-                         <td align="center"> ------ </td>
-                        @endif
-                    </tr>
-                    <tr style="border: 0;">
-                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
-                            .
-                        </td>
-                    </tr>
                     @endfor
                     <!--aqui termino un for-->
         
@@ -279,13 +153,35 @@
                         </td>
                     </tr>
 
-                     <tr style="border: 0;">
+                    <tr style="border: 0;">
+                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
+                            .
+                        </td>
+                    </tr>
+                    <tr style="border: 0;">
                         <td style="border: 0; font-size:3px" colspan="11" class="saltos">
                             .
                         </td>
                     </tr>
 
-                    
+                    <tr style="border: 0;">
+                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
+                            .
+                        </td>
+                    </tr>
+
+                    <tr style="border: 0;">
+                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
+                            .
+                        </td>
+                    </tr>
+
+                    <tr style="border: 0;">
+                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
+                            .
+                        </td>
+                    </tr>
+
                     <tr style="border: 0;">
                         <td colspan="3" class="saltos" align="center" style="height:5px; border: 0;">___________________________</td>
                         <td colspan="4" class="saltos" align="center" style="height:5px; border: 0;">___________________________</td>
@@ -309,11 +205,15 @@
                 <div class="page-break"></div>
                 @endif
                 @endfor
-                
             </div>
         </div>
+       
     </div>
-        
+
+
+
+
+
         <style>@page {
         
          margin: 0;

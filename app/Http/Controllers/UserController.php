@@ -33,8 +33,9 @@ class UserController extends Controller
                 'nomCto' => $user->cve_corta,
                 'rol' => 1,
                 'numcomp' => -1,
+                //'token' => '',
                 'token' => $user->createToken($user->user_mks)->plainTextToken,
-                'sexo' => 1
+                'sexo' => 1,
 
               );
             return response()->json($array);
@@ -100,7 +101,7 @@ class UserController extends Controller
             $numero_comp = trim($num_comp->cve);
         }
         
-        if(str_contains($puesto, 'COMPRASJE')){
+        if(str_contains($puesto, 'COMPRASJEF')){
             $rol = 2;
         }
 
@@ -111,6 +112,7 @@ class UserController extends Controller
         $array = array(
                 'usuario' => $userPYC->user_mks,
                 'nombre_lar' => $userPYC->name,
+                //'token' => '',
                 'token' => $userPYC->createToken($userPYC->user_mks)->plainTextToken,
                 'nomCto' => $userPYC->cve_corta,
                 'rol' => $rol,

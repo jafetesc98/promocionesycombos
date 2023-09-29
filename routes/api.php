@@ -26,6 +26,11 @@ Route::get('/prov', [App\Http\Controllers\ArticuloController::class, 'getProveed
 
 Route::get('/acuerdos', [App\Http\Controllers\ArticuloController::class, 'getAcuerdos']);
 
+Route::get('/acuerdos-dir', [App\Http\Controllers\ArticuloController::class, 'getAcuerdos_dir']);
+
+//nueva ruta
+Route::get('/cliente', [App\Http\Controllers\ArticuloController::class, 'getCliente']);
+
 Route::post('/crea-prm', [App\Http\Controllers\PromocionController::class, 'crearPrePromocion']);
 
 Route::post('/upd-prm', [App\Http\Controllers\PromocionController::class, 'editarPrePromocion']);
@@ -52,3 +57,6 @@ Route::post('/rechazar-prom', [App\Http\Controllers\PromocionController::class, 
 
 //Autorizadas
 Route::get('/autorizadas', [App\Http\Controllers\PromocionController::class, 'getAutorizadas']);
+
+//formato
+Route::get('/formato', [App\Http\Controllers\PromocionController::class, 'formato']);

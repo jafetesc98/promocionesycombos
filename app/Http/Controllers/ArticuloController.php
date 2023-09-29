@@ -8,6 +8,7 @@ use App\Models\UserMKS;
 use App\Models\UserPYC;
 use App\Models\Articulo;
 use App\Models\Proveedor;
+use App\Models\Cliente;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -153,11 +154,9 @@ class ArticuloController extends Controller
         $comprador = $request->input('compr',-1);
         $proveedor = $request->input('prov','00');
         $usuario = $request->input('usr','-1');
-        /*$apoyos = DB::table('Rca_ApoyosDir')
-                        ->select(DB::raw('Folio + \'*\' as Folio,
-                        Comprador, Nombre, Linea1, \'APOYOS DIRECCION\' as boletin, fecApoyo as Fecha'))
-                        ->where('Comprador',$comprador);
-                        */
+
+        
+                        
 
         $puesto = 'admin';
         if(strtoupper($usuario) != 'PYC'){
@@ -172,6 +171,20 @@ class ArticuloController extends Controller
                         ->where('Comprador',$comprador)
                         ->where('Clave', $proveedor)
                         ->get();
+
+                        /* $apoyos = DB::table('Rca_Acuerdos')
+                        ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
+                        //->union($apoyos)
+                        ->where('Comprador','3')
+                        ->where('Clave', '000000057')
+                        ->get(); */
+
+              /* $apoyos = DB::table('Rca_ApoyosDir')
+                        ->select(DB::raw("Folio + '*' as Folio,Comprador, Nombre, Linea1, 'APOYOS DIRECCION' as boletin, fecApoyo as Fecha"))
+                        ->where('Comprador',$comprador);  */
+                        $apoyos = DB::table('Rca_ApoyosDir')
+                        ->select(DB::raw("Folio + '*' as Folio,Comprador, Nombre, Linea1, 'APOYOS DIRECCION' as boletin, fecApoyo as Fecha"))
+                        ->where('Comprador',$comprador)->get();; 
         }
 
         else{
@@ -182,8 +195,35 @@ class ArticuloController extends Controller
                         ->where('Clave', $proveedor)
                         ->get();
         }
+        $countResult = count($acuerdos);
+
+        if($countResult == 0){
+            return response()->json($apoyos);
+        }else{
+            return response()->json($acuerdos);
+        }
         
-        return response()->json($acuerdos);
+        
+    }
+
+    public function getCliente(Request $request){
+        $nCliente = $request->input('nCliente');
+
+        
+        $cliente = Cliente::where('cve','like','%'.$nCliente.'%')->first();
+
+        if(is_null($cliente)==true){
+            return response()->json(array(
+                'code'      =>  403,
+                'message'   =>  'No se encontró el cliente',
+                'error'     =>  'No se encontró el cliente',
+            ), 403);
+        }
+        
+        $array = array('cve' => $cliente->cve,
+                       'nom' => $cliente->nom);
+
+        return response()->json($array);
     }
 
 }

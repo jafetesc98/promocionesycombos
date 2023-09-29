@@ -36,19 +36,23 @@ class PromocionController extends Controller
         DB::beginTransaction();
         $promocion_pyc = new PromocionPYC;
         $promocion_pyc->status = -1;
-        $promocion_pyc->desProm = $datos['nombre'];
+        $promocion_pyc->numProm = '';
+        $promocion_pyc->desProm = strtoupper($datos['nombre']);
         $promocion_pyc->fec_ini = $datos['fec_ini'];
         $promocion_pyc->fec_fin = $datos['fec_fin'];
         $promocion_pyc->hra_ini = '010000';
         $promocion_pyc->hra_fin = '235959';
         $promocion_pyc->inc_similares = is_null($datos['aplicaSim']) ? 'N' : 'S' ;
-        $promocion_pyc->tpoProm = $datos['tipo'];
+
+        //if($datos['tipo'] == 5 || $datos['tipo'] == 6)
+          //  $promocion_pyc->tpoProm = 5;
+        //else 
+            $promocion_pyc->tpoProm = $datos['tipo'];
         
         $promocion_pyc->cte = is_null($datos['cliente']) ? '         ' : 
         str_pad(strval($datos['cliente']), 9, "0", STR_PAD_LEFT);;
         
         $promocion_pyc->retail = $datos['retail'];
-        $promocion_pyc->mostrador = $datos['mostrador'];
         $promocion_pyc->con_pag = is_null($datos['condPago']) ? '     ' 
         : $datos['condPago'];
         $promocion_pyc->seg_0 = is_null($datos['seg1']) ? '   ' 
@@ -63,6 +67,7 @@ class PromocionController extends Controller
         
         $promocion_pyc->uds_limite = is_null($datos['limPzs']) ?
         0 : $datos['limPzs'];
+        $promocion_pyc->uds_vendidas = 0;
         $promocion_pyc->uds_por_cte = is_null($datos['udsVenta']) ? 
         0 : $datos['udsVenta'];
         $promocion_pyc->cantidad_minima = is_null($datos['cantMin']) ?
@@ -71,14 +76,16 @@ class PromocionController extends Controller
         0 : $datos['montoMin'];
         $promocion_pyc->u_alt = $datos['u_alta'];
         $promocion_pyc->proveedor = $datos['proveedor'];
-        $promocion_pyc->uds_por_cte = is_null($datos['udsVenta']) ?
-        0 : $datos['udsVenta'];
-        $promocion_pyc->uds_vendidas = 0;
         $promocion_pyc->paga = $datos['paga'];
         $promocion_pyc->folio_ac = $datos['folioAcuerdo'];
         $promocion_pyc->boletin = $datos['boletin'];
+        $promocion_pyc->autoriza = '';
+        $promocion_pyc->mostrador = $datos['mostrador'];
         $promocion_pyc->suc_prec_base = $datos['precBase'];
-
+        $promocion_pyc->numPromReg = '';
+        $promocion_pyc->indicador = $datos['indicador'];
+        
+    
         try{
             $promocion_pyc->save();
         }catch(Throwable $e){
@@ -158,6 +165,26 @@ class PromocionController extends Controller
                 $prmdet->precio_4 = $a->precio_vta4;
             }
             
+            //Si es promocion hibirida
+            else if($datos['tipo'] == 6){
+                //$prmdet->cve_art = $value['cod_cob'];
+                //$prmdet->des_art = $value['desc_cob'];
+                $prmdet->sin_cargo = 'S';
+                $prmdet->cobradas = $value['cobradas'];
+                $prmdet->regaladas = $value['regaladas'];
+                $prmdet->art_reg = $value['cod_reg'];
+                $prmdet->emp_reg = $value['emp_reg'];
+                $prmdet->fac_min_reg = $value['fac_min_reg'];
+                $prmdet->precio_reg = 0.0;
+                $prmdet->desc_reg = $value['desc_reg'];
+
+                //Si precio no esta capturado ponemos el del cat art
+                $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : $value['precio1'];
+                $prmdet->precio_1 = is_null($value['precio2']) ? $a->precio_vta1 : $value['precio2'];
+                $prmdet->precio_2 = is_null($value['precio3']) ? $a->precio_vta2 : $value['precio3'];
+                $prmdet->precio_3 = is_null($value['precio4']) ? $a->precio_vta3 : $value['precio4'];
+                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : $value['precio5'];
+            }
             $prmdet->save();
         }
 
@@ -300,7 +327,7 @@ class PromocionController extends Controller
         0 : $datos['cantMin'] ;
         $promocion_pyc->compra_minima = is_null($datos['montoMin']) ?
         0 : $datos['montoMin'];
-        $promocion_pyc->u_alt = $datos['u_alta'];
+        //$promocion_pyc->u_alt = $datos['u_alta'];
         $promocion_pyc->proveedor = $datos['proveedor'];
         $promocion_pyc->uds_por_cte = is_null($datos['udsVenta']) ?
         0 : $datos['udsVenta'];
@@ -309,6 +336,7 @@ class PromocionController extends Controller
         $promocion_pyc->folio_ac = $datos['folioAcuerdo'];
         $promocion_pyc->boletin = $datos['boletin'];
         $promocion_pyc->suc_prec_base = $datos['precBase'];
+        $promocion_pyc->indicador = $datos['indicador'];
 
         DB::beginTransaction();
         try{
@@ -394,7 +422,7 @@ class PromocionController extends Controller
                 //$prmdet->emp_reg = $value->cve;
                 $prmdet->fac_min_reg = 0.0;
                 $prmdet->precio_reg = 0.0;
-            } else{
+            } else if($datos['tipo'] == 5){
                 $prmdet->sin_cargo = 'S';
                 $prmdet->cobradas = $value['cobradas'];
                 $prmdet->regaladas = $value['regaladas'];;
@@ -403,6 +431,26 @@ class PromocionController extends Controller
                 $prmdet->fac_min_reg = $value['fac_min_reg'];
                 $prmdet->precio_reg = 0.0;
                 $prmdet->desc_reg = $value['desc_reg'];
+            }
+            //Si es promocion hibirida
+            else if($datos['tipo'] == 6){
+                //$prmdet->cve_art = $value['cod_cob'];
+                //$prmdet->des_art = $value['desc_cob'];
+                $prmdet->sin_cargo = 'S';
+                $prmdet->cobradas = $value['cobradas'];
+                $prmdet->regaladas = $value['regaladas'];
+                $prmdet->art_reg = $value['cod_reg'];
+                $prmdet->emp_reg = $value['emp_reg'];
+                $prmdet->fac_min_reg = $value['fac_min_reg'];
+                $prmdet->precio_reg = 0.0;
+                $prmdet->desc_reg = $value['desc_reg'];
+
+                //Si precio no esta capturado ponemos el del cat art
+                $prmdet->precio_0 = !array_key_exists('precio1',$value) ? $a->precio_vta0 : $value['precio1'];
+            $prmdet->precio_1 = !array_key_exists('precio2',$value) ? $a->precio_vta1 : $value['precio2'];
+            $prmdet->precio_2 = !array_key_exists('precio3',$value) ? $a->precio_vta2 : $value['precio3'];
+            $prmdet->precio_3 = !array_key_exists('precio4',$value) ? $a->precio_vta3 : $value['precio4'];
+            $prmdet->precio_4 = !array_key_exists('precio5',$value) ? $a->precio_vta4 : $value['precio5'];
             }
 
 
@@ -436,12 +484,12 @@ class PromocionController extends Controller
         $comprador = $request->input("compr","-1");
         $usuario = UserPYC::where('cve_corta', $comprador)->first();
 
-        $permiso = DB::table('pyc_roles_permisos')
+        /* $permiso = DB::table('pyc_roles_permisos')
                             ->where('rol_id',$usuario->id)
                             ->first();
         if(is_null($permiso)){
             return 'es lamentable';
-        }
+        } */
 
         $promo = PromocionPYC::where('id',$idprom)->first();
         if($promo->status == -1){
@@ -489,17 +537,17 @@ class PromocionController extends Controller
 
     public function creaPromoMks(Request $request)
     {
-
+        //$promo = new PromocionMKS;
         $idprom = $request->input("idprom","-1");
         $comprador = $request->input("compr","-1");
         $usuario = UserPYC::where('cve_corta', $comprador)->first();
 
         //return response()->json($comprador);
 
-        if(is_null($usuario)){
+        /* if(is_null($usuario)){
             try{
                 $promo->save();
-                ;
+                
             }catch(Throwable $e){
                 DB::rollBack();
                 return response()->json(array(
@@ -525,7 +573,7 @@ class PromocionController extends Controller
                     'error'     =>  'Usuario sin permisos para dar de alta la promoción',
                 ), 421);
             }
-        }
+        } */
 
         $consecutivo = DB::table('prmhdr')
              ->select(DB::raw('isnull(MAX( substring(NumProm,2,7)),0)+1 as numProm'))
@@ -568,11 +616,29 @@ class PromocionController extends Controller
             $promo->AplicaSobrePrm = ' ';
             $promo->AplicaSobreNeg = '1';
             $promo->SelPor = '0';
-            $promo->TpoProm = $promocion_pyc->tpoProm;
+            if($promocion_pyc->tpoProm == 6){
+                $promo->TpoProm = 5;
+            }
+            else{
+                $promo->TpoProm = $promocion_pyc->tpoProm;
+            }
             //$promo->cte = $promocion_pyc->
             $promo->cte = $promocion_pyc->cte;
             $promo->CodBarCF = '                ';
-            $promo->dep_sur = '      ';
+           
+            if($promocion_pyc->retail == 1 && $promocion_pyc->mostrador == 1 || $promocion_pyc->retail == 0 && $promocion_pyc->mostrador == 1){
+                $promo->dep_sur = '      ';
+            }else{ 
+            if($value['suc']=='001' || $value['suc']=='002' || $value['suc']=='013' || $value['suc']=='037' ||$value['suc']=='051' || $value['suc']=='053' || $value['suc']=='057'){
+                $promo->dep_sur = '      ';
+            }else{
+                if($promocion_pyc->retail == 1 ){
+                    $promo->dep_sur =$value['suc'].'AUT';
+                }else{
+                    $promo->dep_sur = '      ';
+                }
+            }
+            }
             $promo->con_pag = $promocion_pyc->con_pag;
             $promo->seg_0 = $promocion_pyc->seg_0;
             $promo->seg_1 = $promocion_pyc->seg_1;
@@ -598,6 +664,7 @@ class PromocionController extends Controller
             $promo->u_mod = $promocion_pyc->u_alt;
 
             try{
+               
                 $promo->save();
                 ;
             }catch(Throwable $e){
@@ -611,9 +678,32 @@ class PromocionController extends Controller
 
             //Insertando el detalle
             //Insertando registros en prmhdet por cada articulo
+
             $npar = 0;
             foreach ($articulos as $key => $value2) {
+                //Primero verificar que si la promocion es de precio + regalo
+                //insertamos primero la de regalo con precios del cat art
+
                 $det_prom = new PromocionDetMKS;
+
+                if($promocion_pyc->tpoProm == 6){
+                    $a = DB::table('invart')
+                        ->where('art', $value2['cve_art'])
+                        ->where('alm',$promocion_pyc->suc_prec_base)
+                        ->first();
+                    $det_prom->precio_0 = $a->precio_vta0;
+                    $det_prom->precio_1 = $a->precio_vta1;
+                    $det_prom->precio_2 = $a->precio_vta2;
+                    $det_prom->precio_3 = $a->precio_vta3;
+                    $det_prom->precio_4 = $a->precio_vta4;
+                } else{
+                    $det_prom->precio_0 = $value2['precio_0'];
+                    $det_prom->precio_1 = $value2['precio_1'];
+                    $det_prom->precio_2 = $value2['precio_2'];
+                    $det_prom->precio_3 = $value2['precio_3'];
+                    $det_prom->precio_4 = $value2['precio_4'];
+                }
+
                 $det_prom->ibuff = '     ';
                 $det_prom->cia = 'MAB';
                 $det_prom->alm = $value['suc'];
@@ -642,11 +732,8 @@ class PromocionController extends Controller
                 $det_prom->emp_reg = str_pad(strval($value2['emp_reg']), 3, " ", STR_PAD_LEFT);
                 $det_prom->fac_min_reg = $value2['fac_min_reg'];
                 $det_prom->precio_reg = $value2['precio_reg'];
-                $det_prom->precio_0 = $value2['precio_0'];
-                $det_prom->precio_1 = $value2['precio_1'];
-                $det_prom->precio_2 = $value2['precio_2'];
-                $det_prom->precio_3 = $value2['precio_3'];
-                $det_prom->precio_4 = $value2['precio_4'];
+                
+
                 $det_prom->p_dsc_0 = $value2['p_dsc_0'];
                 $det_prom->p_dsc_1 = $value2['p_dsc_1'];
                 $det_prom->p_dsc_2 = $value2['p_dsc_2'];
@@ -677,10 +764,167 @@ class PromocionController extends Controller
 
         }
 
+        //Si la promocion es de precio y regalo, se insertan 2 registros
+        //Primero la de regalo y luego la de precio, de esta manera pasan las 2
+        $consec_aplicar2 = "";
+        if($promocion_pyc->tpoProm == 6){
+
+            //Obtner el segundo consecutivo
+            $consecutivo2 = DB::table('prmhdr')
+             ->select(DB::raw('isnull(MAX( substring(NumProm,2,7)),0)+1 as numProm'))
+             ->where('modulo', 'P')
+             ->first();
+
+
+            $consec_aplicar2 = str_pad($consecutivo2->numProm."", 7, "0", STR_PAD_LEFT);
+            $consec_aplicar2 = 'P'.$consec_aplicar2;
+            foreach ($sucursales as $key => $value) {
+                $promo = new PromocionMKS;
+                $promo->ibuff = '     ';
+                $promo->cia = 'MAB';
+                $promo->alm = $value['suc'];
+                $promo->suc = $value['suc'];
+                $promo->NumProm = $consec_aplicar2;
+                $promo->DesProm = $promocion_pyc->desProm;
+                $promo->fec_ini = $promocion_pyc->fec_ini;
+                $promo->fec_fin = $promocion_pyc->fec_fin;
+                $promo->hra_ini = $promocion_pyc->hra_ini;
+                $promo->hra_fin = $promocion_pyc->hra_fin;
+                $promo->hra_ini = $promocion_pyc->hra_ini;
+                $promo->Modulo = 'P';
+                $promo->status = '1';
+                $promo->inc_similares = $promocion_pyc->inc_similares;
+                $promo->AplicaSobrePrm = ' ';
+                $promo->AplicaSobreNeg = '1';
+                $promo->SelPor = '0';
+                $promo->TpoProm = 1;
+                //$promo->cte = $promocion_pyc->
+                $promo->cte = $promocion_pyc->cte;
+                $promo->CodBarCF = '                ';
+                $promo->dep_sur = '      ';
+                $promo->con_pag = $promocion_pyc->con_pag;
+                $promo->seg_0 = $promocion_pyc->seg_0;
+                $promo->seg_1 = $promocion_pyc->seg_1;
+                $promo->seg_2 = $promocion_pyc->seg_2;
+                $promo->seg_3 = $promocion_pyc->seg_3;
+                $promo->seg_4 = '   ';
+                $promo->giro_0 = '   ';
+                $promo->giro_1 = '   ';
+                $promo->giro_2 = '   ';
+                $promo->giro_3 = '   ';
+                $promo->giro_4 = '   ';
+                $promo->usa_limite = 'N';
+                $promo->uds_limite = $promocion_pyc->uds_limite;
+                $promo->uds_vendidas = $promocion_pyc->uds_vendidas;
+                $promo->uds_por_cte = $promocion_pyc->uds_por_cte;
+                $promo->cantidad_minima = $promocion_pyc->cantidad_minima;
+                $promo->compra_minima = $promocion_pyc->compra_minima;
+                $promo->f_alt = date("Ymd");
+                $promo->h_alt = date("His");
+                $promo->u_alt = $promocion_pyc->u_alt;
+                $promo->f_mod = date("Ymd");
+                $promo->h_mod = date("His");
+                $promo->u_mod = $promocion_pyc->u_alt;
+
+                try{
+                    $promo->save();
+                    ;
+                }catch(Throwable $e){
+                    DB::rollBack();
+                    return response()->json(array(
+                        'code'      =>  421,
+                        'message'   =>  'Ocurrió un error al guardar, intentelo nuevamente',
+                        'error'     =>  'Ocurrió un error al guardar, intentelo nuevamente',
+                    ), 421);
+                }
+
+                //Insertando el detalle
+                //Insertando registros en prmhdet por cada articulo
+
+                $npar = 0;
+                foreach ($articulos as $key => $value2) {
+
+                    $det_prom = new PromocionDetMKS;
+                    $det_prom->precio_0 = $value2['precio_0'];
+                    $det_prom->precio_1 = $value2['precio_1'];
+                    $det_prom->precio_2 = $value2['precio_2'];
+                    $det_prom->precio_3 = $value2['precio_3'];
+                    $det_prom->precio_4 = $value2['precio_4'];
+
+                    $det_prom->ibuff = '     ';
+                    $det_prom->cia = 'MAB';
+                    $det_prom->alm = $value['suc'];
+                    $det_prom->suc = $value['suc'];
+                    $det_prom->NumProm = $consec_aplicar2;
+                    $det_prom->NPar = str_pad(strval($npar), 5, " ", STR_PAD_LEFT);
+                    $det_prom->RenExcep = ' ';
+                    $det_prom->status = 1;
+                    $det_prom->cve_art = $value2['cve_art'];
+                    $det_prom->des_art = $value2['des_art'];
+                    $det_prom->lin = '    ';
+                    $det_prom->s_lin = '    ';
+                    $det_prom->fam = '    ';
+                    $det_prom->s_fam = '    ';
+                    $det_prom->marca = '        ';
+                    $det_prom->temp = '    ';
+                    $det_prom->prv = '         ';
+                    $det_prom->Id_modelo = '                    ';
+                    $det_prom->cte = '         ';
+                    $det_prom->seg = '   ';
+                    $det_prom->giro = '   ';
+
+                    $det_prom->sin_cargo = 'N';
+                    $det_prom->cobradas = 0.0;
+                    $det_prom->regaladas = 0.0;
+                    //$prmdet->art_reg = $value->cve;
+                    //$prmdet->emp_reg = $value->cve;
+                    $det_prom->fac_min_reg = 0.0;
+                    $det_prom->precio_reg = 0.0;
+                    
+
+                    $det_prom->art_reg = "               ";
+                    $det_prom->emp_reg = "   ";
+                    
+
+                    $det_prom->p_dsc_0 = $value2['p_dsc_0'];
+                    $det_prom->p_dsc_1 = $value2['p_dsc_1'];
+                    $det_prom->p_dsc_2 = $value2['p_dsc_2'];
+                    $det_prom->MontoDsc = $value2['Monto_Dsc'];
+                    $det_prom->PuntosSuma = $value2['Monto_Dsc'];
+                    $det_prom->PuntosResta = $value2['Monto_Dsc'];
+                    $det_prom->PorcMonedero = $value2['Monto_Dsc'];
+                    $det_prom->MontoBoletos = $value2['Monto_Dsc'];
+                    $det_prom->Boletos = 0;
+
+                    try{
+                        $det_prom->save();
+                        ;
+                    }catch(Throwable $e){
+                        DB::rollBack();
+                        return response()->json(array(
+                            'code'      =>  421,
+                            'message'   =>  'Ocurrió un error al guardar, intentelo nuevamente',
+                            'error'     =>  'Ocurrió un error al guardar, intentelo nuevamente',
+                        ), 421);
+                    }
+                    $npar = $npar +1;
+                    
+                    //return response()->json($det_prom->art_reg);
+                    //return response()->json($value['art_reg']);
+                }
+
+
+            }
+        }
+
         //Hasta aqui todo bien, falta validar que el cliente exista
         $promocion_pyc->numProm = $consec_aplicar;
         $promocion_pyc->autoriza = $comprador;
         $promocion_pyc->status = 1;
+        if($promocion_pyc->tpoProm == 6){
+            $promocion_pyc->numProm = $consec_aplicar2;
+            $promocion_pyc->numPromReg = $consec_aplicar;
+        }
         try{
             $promocion_pyc->save();
         }catch(Throwable $e){
@@ -786,5 +1030,139 @@ class PromocionController extends Controller
         }
         
         return response()->json($promociones);
+    }
+
+    public function formato(Request $request){
+        //$idprom = $request->input("idprom","2");
+        $idprom = $request->input("idprom","-1");
+        $promo = PromocionPYC::where('id',$idprom)
+                    ->leftJoin('cprprv', 'pyc_prmhdr.proveedor','=','cprprv.proveedor')
+                    ->select('pyc_prmhdr.*','cprprv.nom as nom_prov')
+                    ->get()->first()
+                    ->toArray();
+        $detprom = PromocionDetPYC::where('id_pyc_prom',$idprom)
+                    ->get()->toArray();
+        $suc = PromocionSucPYC::where('prm_id',$idprom)->select('suc')->get()->pluck('suc')->toArray();
+        //return response()->json($suc);
+
+        //Agregando factor de empaques
+        foreach ($detprom as $key => $value) {
+            //Buscando el articulo en tabla invart
+            $factores = DB::table('invart')
+                    ->where('art', $value['cve_art'])
+                    ->where('alm', $promo['suc_prec_base'])
+                    ->select('cant_pre0', 'cant_pre1', 'cant_pre2', 
+                        'cant_pre3', 'cant_pre4', 'precio_vta0', 'precio_vta1',
+                        'precio_vta2', 'precio_vta3', 'precio_vta4'
+                    )
+                    ->get()
+                    ->first();
+            $detprom[$key]['cant_pre0'] = $factores->cant_pre0;
+            $detprom[$key]['cant_pre1'] = $factores->cant_pre1;
+            $detprom[$key]['cant_pre2'] = $factores->cant_pre2;
+            $detprom[$key]['cant_pre3'] = $factores->cant_pre3;
+            $detprom[$key]['cant_pre4'] = $factores->cant_pre4;
+
+            $detprom[$key]['precio_vta0'] = $factores->precio_vta0;
+            $detprom[$key]['precio_vta1'] = $factores->precio_vta1;
+            $detprom[$key]['precio_vta2'] = $factores->precio_vta2;
+            $detprom[$key]['precio_vta3'] = $factores->precio_vta3;
+            $detprom[$key]['precio_vta4'] = $factores->precio_vta4;
+        }
+        //return response()->json($promo);
+
+        $user = "ADMIN";
+        if(strtoupper($promo['u_alt']) != 'PYC' ){
+            $capturo = UserMKS::where('nom_cto', $promo['u_alt'])->first();
+            $user = $capturo['nombre_lar'];
+        }
+
+
+        $datos = array('prom' => $promo, 'arts' => $detprom, 'suc' => $suc );
+
+        $data = [ 'titulo' => 'Formato de Ofertas y promociones'];
+        $numHojas = count($detprom);
+        //$numHojas = 45;
+
+        
+
+        /*$pdf = \PDF::loadView('formatoPromocion', [
+            'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
+            'numHojas' => $numHojas, 'total' => (count($detprom) )]);
+
+        return $pdf->stream('formato.pdf');*/
+        //return response()->json($detprom);
+        if($promo['tpoProm'] == 1){
+            //Sobre 9 porque son los art que caben en una hoja para prom de precio
+            $residuo = $numHojas % 9;
+            if($residuo == 0){
+                $numHojas = intval($numHojas / 9);
+            }else{
+                $numHojas = intval(($numHojas / 9) + 1);
+            }
+            $pdf = \PDF::loadView('formatoPromocion', [
+            'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
+            'numHojas' => $numHojas, 'total' => (count($detprom) )]);
+
+            return $pdf->stream('formato.pdf');
+
+            return view('formatoPromocion', [
+                'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user,
+                'numHojas' => $numHojas, 'total' => (count($detprom) )
+            ]);
+        }
+        
+        if($promo['tpoProm'] == 5){
+            //Sobre 32 porque son los art que caben en una hoja para prom de regalo
+            $residuo = $numHojas % 32;
+            if($residuo == 0){
+                $numHojas = intval($numHojas / 32);
+            }else{
+                $numHojas = intval(($numHojas / 32) + 1);
+            }
+            $pdf = \PDF::loadView('formatoPromocionRegalo', [
+                'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
+                'numHojas' => $numHojas, 'total' => (count($detprom) )]
+            );
+
+            return $pdf->stream('formato.pdf');
+
+            return view('formatoPromocionRegalo', [
+                'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user,
+                'numHojas' => $numHojas, 'total' => (count($detprom) )
+            ]);
+        }
+            
+        if($promo['tpoProm'] == 6){
+            $residuo = $numHojas % 30;
+            if($residuo == 0){
+                $numHojas = intval($numHojas / 30);
+            }else{
+                $numHojas = intval(($numHojas / 30) + 1);
+            }
+
+            $residuo2 = (count($detprom) ) % 9;
+            $numHojas2 = count($detprom);
+            if($residuo2 == 0){
+                $numHojas2 = intval($numHojas2 / 9);
+            }else{
+                $numHojas2 = intval(($numHojas2 / 9) + 1);
+            }
+
+
+            $pdf = \PDF::loadView('formatoPromocionCombinada', [
+                'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
+                'numHojas' => $numHojas,'numHojas2' => $numHojas2, 'total' => (count($detprom) )]
+            );
+
+            return $pdf->stream('formato.pdf');
+
+            return view('formatoPromocionCombinada', [
+                'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user,
+                'numHojas' => $numHojas, 'total' => (count($detprom) )
+            ]);
+        }
+            
+        //return response()->json($datos);
     }
 }
