@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\UserMKS;
-use App\Models\UserPYC;
+use App\Models\UserPyc;
 use App\Models\PromocionPYC;
 use App\Models\PromocionSucPYC;
 use App\Models\PromocionDetPYC;
@@ -482,7 +482,7 @@ class PromocionController extends Controller
     public function getDetallePromocionAut(Request $request){
         $idprom = $request->input("idprom","-1");
         $comprador = $request->input("compr","-1");
-        $usuario = UserPYC::where('cve_corta', $comprador)->first();
+        $usuario = UserPyc::where('cve_corta', $comprador)->first();
 
         /* $permiso = DB::table('pyc_roles_permisos')
                             ->where('rol_id',$usuario->id)
@@ -540,7 +540,7 @@ class PromocionController extends Controller
         //$promo = new PromocionMKS;
         $idprom = $request->input("idprom","-1");
         $comprador = $request->input("compr","-1");
-        $usuario = UserPYC::where('cve_corta', $comprador)->first();
+        $usuario = UserPyc::where('cve_corta', $comprador)->first();
 
         //return response()->json($comprador);
 
@@ -945,7 +945,7 @@ class PromocionController extends Controller
     public function denegarProm(Request $request){
         $idprom = $request->input("idprom","-1");
         $comprador = $request->input("compr","-1");
-        $usuario = UserPYC::where('cve_corta', $comprador)->first();
+        $usuario = UserPyc::where('cve_corta', $comprador)->first();
 
         //return response()->json($comprador);
 

@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use App\Models\UserMKS;
-use App\Models\UserPYC;
+use App\Models\UserPyc;
 use App\Models\Articulo;
 use App\Models\Proveedor;
 use App\Models\Cliente;
@@ -64,7 +64,7 @@ class ArticuloController extends Controller
         //Validando si es el usuario ADMIN
         //En caso de serlo, no se valida en tabla de MKS
         if(strtoupper(trim($request->usuario)) === 'ADMIN'){
-            $user = UserPYC::where('user_mks','ADMIN')->first();
+            $user = UserPyc::where('user_mks','ADMIN')->first();
             if (! Hash::check($request->clave, $user->password)) {
                 return response()->json(array(
                     'code'      =>  422,
@@ -92,7 +92,7 @@ class ArticuloController extends Controller
         }
 
         //Si existe en MKS, pero no en tablas PYC, no puede usar el sistema
-        $userPYC = UserPYC::where('user_mks', $request->usuario)->first();
+        $userPYC = UserPyc::where('user_mks', $request->usuario)->first();
         if($userPYC == null){
             return response()->json(array(
                 'code'      =>  422,

@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class UserPYC extends Authenticatable
+class UserPyc extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 

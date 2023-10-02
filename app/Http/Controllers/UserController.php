@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use App\Models\UserMKS;
-use App\Models\UserPYC;
+use App\Models\UserPyc;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +18,7 @@ class UserController extends Controller
         //Validando si es el usuario ADMIN
         //En caso de serlo, no se valida en tabla de MKS
         if(strtoupper(trim($request->usuario)) === 'ADMIN'){
-            $user = UserPYC::where('user_mks','ADMIN')->first();
+            $user = UserPyc::where('user_mks','ADMIN')->first();
             if (! Hash::check($request->clave, $user->password)) {
                 return response()->json(array(
                     'code'      =>  420,
@@ -61,8 +61,8 @@ class UserController extends Controller
         }
 
         //Si existe en MKS, pero no en tablas PYC, no puede usar el sistema
-        $userPYC = UserPYC::where('user_mks', $request->usuario)->first();
-        if($userPYC == null){
+        $userPyc = UserPyc::where('user_mks', $request->usuario)->first();
+        if($userPyc == null){
             return response()->json(array(
                 'code'      =>  422,
                 'message'   =>  'Usuario MKS no dado de alta en MABPROMOCIONES',
@@ -110,15 +110,15 @@ class UserController extends Controller
         }
 
         $array = array(
-                'usuario' => $userPYC->user_mks,
-                'nombre_lar' => $userPYC->name,
+                'usuario' => $userPyc->user_mks,
+                'nombre_lar' => $userPyc->name,
                 //'token' => '',
-                'token' => $userPYC->createToken($userPYC->user_mks)->plainTextToken,
-                'nomCto' => $userPYC->cve_corta,
+                'token' => $userPyc->createToken($userPyc->user_mks)->plainTextToken,
+                'nomCto' => $userPyc->cve_corta,
                 'rol' => $rol,
                 //'numcomp' => trim($num_comp->cve),
                 'numcomp' => $numero_comp,
-                'sexo' => $userPYC->sexo
+                'sexo' => $userPyc->sexo
               );
         return response()->json($array);
     }
