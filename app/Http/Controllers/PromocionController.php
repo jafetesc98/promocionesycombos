@@ -193,6 +193,7 @@ class PromocionController extends Controller
         
         return response()->json($promocion_pyc);
     }
+    
 
     public function getPromocionesXComprador(Request $request){
         $comprador = $request->input('compr', -1);
@@ -1032,6 +1033,38 @@ class PromocionController extends Controller
         return response()->json($promociones);
     }
 
+    public function getAcuerdoXComprador(Request $request){
+        //$comprador = $request->input('compr',-1);
+        $proveedor = '000000036';
+        $folio ='4132';
+        //$usuario = $request->input('usr','-1');
+
+        $acuerdos = DB::table('Rca_Acuerdos')
+                        ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
+                        //->union($apoyos)
+                        //->where('Comprador',$comprador)
+                        ->where('nom','like','%'.$nombre.'%')
+                        ->where('Clave', $proveedor)
+                        ->get();
+
+                        /* $apoyos = DB::table('Rca_Acuerdos')
+                        ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
+                        //->union($apoyos)
+                        ->where('Comprador','3')
+                        ->where('Clave', '000000057')
+                        ->get(); */
+
+              /* $apoyos = DB::table('Rca_ApoyosDir')
+                        ->select(DB::raw("Folio + '*' as Folio,Comprador, Nombre, Linea1, 'APOYOS DIRECCION' as boletin, fecApoyo as Fecha"))
+                        ->where('Comprador',$comprador);  */
+                        $apoyos = DB::table('Rca_ApoyosDir')
+                        ->select(DB::raw("Folio + '*' as Folio,Comprador, Nombre, Linea1, 'APOYOS DIRECCION' as boletin, fecApoyo as Fecha"))
+                        //->where('Comprador',$comprador)
+                        ->get();; 
+
+        return response()->json($acuerdos);
+    }
+
     public function formato(Request $request){
         //$idprom = $request->input("idprom","2");
         $idprom = $request->input("idprom","-1");
@@ -1042,8 +1075,41 @@ class PromocionController extends Controller
                     ->toArray();
         $detprom = PromocionDetPYC::where('id_pyc_prom',$idprom)
                     ->get()->toArray();
+
+                    //return $promo;
         $suc = PromocionSucPYC::where('prm_id',$idprom)->select('suc')->get()->pluck('suc')->toArray();
         //return response()->json($suc);
+
+        $firmaUser="";
+
+        if (strpos($promo['folio_ac'], '*') !== false) {
+            $cadena = $promo['folio_ac'];
+            $separador = " ";
+            $fol = explode($separador, $cadena);
+            $apoyos = DB::table('Rca_ApoyosDir')
+            ->select(DB::raw("Folio + '*' as Folio,Comprador, Nombre, Linea1, 'APOYOS DIRECCION' as boletin, fecApoyo as Fecha"))
+            ->where('Folio',$fol[0])
+            ->get();
+
+            foreach ($apoyos as &$apoyos) {
+                $firmaUser = $apoyos ;
+            }
+            //return  $firmaUser->Nombre;
+        }else{
+            $cadena = $promo['folio_ac'];
+            $separador = " ";
+            $fol = explode($separador, $cadena);
+            $acuerdos = DB::table('Rca_Acuerdos')
+                     ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
+                    ->where('Folio', $fol[0])
+                    ->get();
+
+            foreach ($acuerdos as &$acuerdos) {
+                 $firmaUser = $acuerdos ;
+            }
+            //return  $firmaUser->Nombre;
+        }
+
 
         //Agregando factor de empaques
         foreach ($detprom as $key => $value) {
@@ -1102,13 +1168,13 @@ class PromocionController extends Controller
             }
             $pdf = \PDF::loadView('formatoPromocion', [
             'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
-            'numHojas' => $numHojas, 'total' => (count($detprom) )]);
+            'numHojas' => $numHojas, 'total' => (count($detprom) ), 'firmaUser'=>$firmaUser]);
 
             return $pdf->stream('formato.pdf');
 
             return view('formatoPromocion', [
                 'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user,
-                'numHojas' => $numHojas, 'total' => (count($detprom) )
+                'numHojas' => $numHojas, 'total' => (count($detprom)), 'firmaUser'=>$firmaUser
             ]);
         }
         
@@ -1122,14 +1188,14 @@ class PromocionController extends Controller
             }
             $pdf = \PDF::loadView('formatoPromocionRegalo', [
                 'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
-                'numHojas' => $numHojas, 'total' => (count($detprom) )]
+                'numHojas' => $numHojas, 'total' => (count($detprom) ), 'firmaUser'=>$firmaUser]
             );
 
             return $pdf->stream('formato.pdf');
 
             return view('formatoPromocionRegalo', [
                 'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user,
-                'numHojas' => $numHojas, 'total' => (count($detprom) )
+                'numHojas' => $numHojas, 'total' => (count($detprom) ), 'firmaUser'=>$firmaUser
             ]);
         }
             
@@ -1152,14 +1218,14 @@ class PromocionController extends Controller
 
             $pdf = \PDF::loadView('formatoPromocionCombinada', [
                 'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
-                'numHojas' => $numHojas,'numHojas2' => $numHojas2, 'total' => (count($detprom) )]
+                'numHojas' => $numHojas,'numHojas2' => $numHojas2, 'total' => (count($detprom) ), 'firmaUser'=>$firmaUser]
             );
 
             return $pdf->stream('formato.pdf');
 
             return view('formatoPromocionCombinada', [
                 'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user,
-                'numHojas' => $numHojas, 'total' => (count($detprom) )
+                'numHojas' => $numHojas, 'total' => (count($detprom) ), 'firmaUser'=>$firmaUser
             ]);
         }
             

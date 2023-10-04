@@ -58,5 +58,8 @@ Route::post('/rechazar-prom', [App\Http\Controllers\PromocionController::class, 
 //Autorizadas
 Route::get('/autorizadas', [App\Http\Controllers\PromocionController::class, 'getAutorizadas']);
 
+//ultimo metodo
+Route::get('/acurdoformato', [App\Http\Controllers\PromocionController::class, 'getAcuerdoXComprador']);
+
 //formato
 Route::get('/formato', [App\Http\Controllers\PromocionController::class, 'formato']);

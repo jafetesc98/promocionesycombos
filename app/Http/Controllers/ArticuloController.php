@@ -134,7 +134,7 @@ class ArticuloController extends Controller
             $proveedores = DB::table('cprprv')
                             ->select('proveedor', 'nom')
                             ->where('modulo','P')
-                            ->where('comprador',$comprador)
+                            //->where('comprador',$comprador)
                             ->get();
         }
 
@@ -155,7 +155,7 @@ class ArticuloController extends Controller
         $proveedor = $request->input('prov','00');
         $usuario = $request->input('usr','-1');
 
-        
+        $pila=array();
                         
 
         $puesto = 'admin';
@@ -168,10 +168,10 @@ class ArticuloController extends Controller
            $acuerdos = DB::table('Rca_Acuerdos')
                         ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
                         //->union($apoyos)
-                        ->where('Comprador',$comprador)
+                        //->where('Comprador',$comprador)
                         ->where('Clave', $proveedor)
                         ->get();
-
+                        $conteo = count($acuerdos);
                         /* $apoyos = DB::table('Rca_Acuerdos')
                         ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
                         //->union($apoyos)
@@ -182,12 +182,43 @@ class ArticuloController extends Controller
               /* $apoyos = DB::table('Rca_ApoyosDir')
                         ->select(DB::raw("Folio + '*' as Folio,Comprador, Nombre, Linea1, 'APOYOS DIRECCION' as boletin, fecApoyo as Fecha"))
                         ->where('Comprador',$comprador);  */
-                        $apoyos = DB::table('Rca_ApoyosDir')
-                        ->select(DB::raw("Folio + '*' as Folio,Comprador, Nombre, Linea1, 'APOYOS DIRECCION' as boletin, fecApoyo as Fecha"))
-                        ->where('Comprador',$comprador)->get();; 
-        }
 
-        else{
+                        for($i=0 ; $i<$conteo; $i++ ){
+                            $acuer = array(
+                             'Folio'=> $acuerdos[$i]->Folio,
+                             'Comprador'=> $acuerdos[$i]->Comprador,
+                             'Nombre'=> $acuerdos[$i]->Nombre, 
+                             'Linea1'=> $acuerdos[$i]->Linea1,
+                             'boletin'=> $acuerdos[$i]->boletin, 
+                             'Fecha'=> $acuerdos[$i]->Fecha
+                             );
+                            
+                             array_push($pila, $acuer);
+                         }
+
+                         $apoyos = DB::table('Rca_ApoyosDir')
+                        ->select(DB::raw("Folio + '*' as Folio,Comprador, Nombre, Linea1, 'APOYOS DIRECCION' as boletin, fecApoyo as Fecha"))
+                        //->where('Comprador',$comprador)
+                        ->get(); 
+
+                        $conteo1 = count($apoyos);
+                        $total = $conteo + $conteo1;
+
+                        for($i=0 ; $i<$conteo1; $i++ ){
+                            $acuer1 = array(
+                             'Folio'=> $apoyos[$i]->Folio,
+                             'Comprador'=> $apoyos[$i]->Comprador,
+                             'Nombre'=> $apoyos[$i]->Nombre, 
+                             'Linea1'=> $apoyos[$i]->Linea1,
+                             'boletin'=> $apoyos[$i]->boletin, 
+                             'Fecha'=> $apoyos[$i]->Fecha
+                             );
+                            
+                             array_push($pila, $acuer1);
+                         }
+                       //return $pila;
+        }
+       /*  else{
             $acuerdos = DB::table('Rca_Acuerdos')
                         ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
                         //->union($apoyos)
@@ -196,15 +227,16 @@ class ArticuloController extends Controller
                         ->get();
         }
         $countResult = count($acuerdos);
-
         if($countResult == 0){
             return response()->json($apoyos);
         }else{
             return response()->json($acuerdos);
-        }
+        } */
+        return json_encode($pila, JSON_PRETTY_PRINT);
         
         
     }
+    
 
     public function getCliente(Request $request){
         $nCliente = $request->input('nCliente');

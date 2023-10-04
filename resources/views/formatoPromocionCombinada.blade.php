@@ -511,7 +511,7 @@
                     </tr>
                     <tr style="border: 0; ">
                         <td colspan="3" class="saltos" align="center" style="height:5px; border: 0;">ISRAEL DOMINGUEZ VELA</td>
-                        <td colspan="4" class="saltos" align="center" style="height:5px; border: 0;">{{$user}}</td>
+                        <td colspan="4" class="saltos" align="center" style="height:5px; border: 0;">{{$firmaUser->Nombre}}</td>
                         <td colspan="3" class="saltos" align="center" style="height:5px; border: 0;"></td>
                     </tr>
 
