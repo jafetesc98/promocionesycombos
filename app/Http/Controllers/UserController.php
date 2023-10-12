@@ -93,12 +93,12 @@ class UserController extends Controller
         $numero_comp = -1;
         
         if(str_contains($puesto, 'COMPRAS')){
-            $numcomp = DB::table('cprcom')
+            /* $numcomp = DB::table('cprcom')
                         ->select('cve')
                         ->where('nom','like','%'.$nombre.'%')
                         ->first();
             $num_comp = $numcomp;
-            $numero_comp = trim($num_comp->cve);
+            $numero_comp = trim($num_comp->cve); */
         }
         
         if(str_contains($puesto, 'COMPRASJEF')){
@@ -116,8 +116,9 @@ class UserController extends Controller
                 'token' => $userPyc->createToken($userPyc->user_mks)->plainTextToken,
                 'nomCto' => $userPyc->cve_corta,
                 'rol' => $rol,
+                'numcomp' => 1,
                 //'numcomp' => trim($num_comp->cve),
-                'numcomp' => $numero_comp,
+                //'numcomp' => $numero_comp,
                 'sexo' => $userPyc->sexo
               );
         return response()->json($array);

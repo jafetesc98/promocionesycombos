@@ -129,11 +129,11 @@ class PromocionController extends Controller
             //Si es promocion de precio
             if($datos['tipo'] == 1){
                 //Si precio no esta capturado ponemos el del cat art
-                $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : $value['precio1'];
-                $prmdet->precio_1 = is_null($value['precio2']) ? $a->precio_vta1 : $value['precio2'];
-                $prmdet->precio_2 = is_null($value['precio3']) ? $a->precio_vta2 : $value['precio3'];
-                $prmdet->precio_3 = is_null($value['precio4']) ? $a->precio_vta3 : $value['precio4'];
-                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : $value['precio5'];
+                $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : round($value['precio1'], 2);
+                $prmdet->precio_1 = is_null($value['precio2']) ? $a->precio_vta1 : round($value['precio2'], 2);
+                $prmdet->precio_2 = is_null($value['precio3']) ? $a->precio_vta2 : round($value['precio3'], 2);
+                $prmdet->precio_3 = is_null($value['precio4']) ? $a->precio_vta3 : round($value['precio4'], 2);
+                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : round($value['precio5'], 2);
                 
                 $prmdet->sin_cargo = 'N';
                 $prmdet->cobradas = 0.0;
