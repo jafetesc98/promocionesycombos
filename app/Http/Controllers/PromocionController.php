@@ -950,9 +950,9 @@ class PromocionController extends Controller
 
         //return response()->json($comprador);
 
-        if(is_null($usuario)){
+       /*  if(is_null($usuario)){
             try{
-                $promo->save();
+                //$promo->save();
                 ;
             }catch(Throwable $e){
                 DB::rollBack();
@@ -969,7 +969,7 @@ class PromocionController extends Controller
                             ->first();
         if(is_null($permiso)){
             try{
-                $promo->save();
+                //$promo->save();
                 ;
             }catch(Throwable $e){
                 DB::rollBack();
@@ -979,7 +979,7 @@ class PromocionController extends Controller
                     'error'     =>  'Usuario sin permisos para denegar la promoción',
                 ), 421);
             }
-        }
+        } */
 
         $promocion_pyc = PromocionPYC::where('id',$idprom)->first();
         $promocion_pyc->status = 2;

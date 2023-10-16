@@ -31,6 +31,12 @@
                             <br>
                         </td>
                     </tr>
+                    <tr>
+                        <!--<td style="width:15px;" align="center" class="margen"> </td>-->
+                        <td scope="col" rowspan = "1" colspan="2" align="center" style="background-color: #ccc">NOMBRE DE LA PROMOCION</td>
+                        <td scope="col"  align="center" colspan="8" style="max-width:650px; border-bottom: 0;">{{$prom['desProm']}}</td>
+                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
+                    </tr>
 
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"> </td>-->
