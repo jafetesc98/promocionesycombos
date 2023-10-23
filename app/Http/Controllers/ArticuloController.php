@@ -24,6 +24,10 @@ class ArticuloController extends Controller
 
 
         //////////busqueda de factor minimo en la tabla invars///////////
+        if($empaque=='otro' || $empaque==''){
+
+        }else{
+
         if($empaque=='PZA'){
 
         }else{
@@ -49,6 +53,8 @@ class ArticuloController extends Controller
                 }
               
             }
+        }
+
         $arti = DB::table('inviar')->where('art', $art)->first();
         if (is_null($arti)) {
             return response()->json(array(
