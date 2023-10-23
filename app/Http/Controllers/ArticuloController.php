@@ -20,7 +20,35 @@ class ArticuloController extends Controller
         $sucursal = $request->input('suc','001');
         $art = $request->input('art','0');
         $proveedor = $request->input('prov','0');
-        
+        $empaque = $request ->input('empaque');
+
+
+        //////////busqueda de factor minimo en la tabla invars///////////
+        if($empaque=='PZA'){
+
+        }else{
+        $sub_alm;
+                if($empaque=='CJA'){
+                    $sub_alm=$sucursal.'C';
+                }if($empaque=='PAQ'){
+                    $sub_alm=$sucursal.'M';
+                }
+
+                $fact = DB::table('invars')
+                ->select(DB::raw('fac_minimo'))
+                ->where('cve_art', $art)
+                ->where('alm', $sucursal)
+                ->where('sub_alm', $sub_alm)
+                ->first();
+
+                if (is_null($fact)) {
+                    return response()->json(array(
+                        'code'      =>  422,
+                        'message'   =>  'No se encontro esta configuración para el articulo ingresado'
+                    ), 422);  
+                }
+              
+            }
         $arti = DB::table('inviar')->where('art', $art)->first();
         if (is_null($arti)) {
             return response()->json(array(
@@ -28,6 +56,8 @@ class ArticuloController extends Controller
                 'message'   =>  'El código del artículo no fue encontrado'
             ), 422);  
         }
+
+
         $articulo = DB::table('invart')
                     ->leftJoin('inviar', 'invart.art', '=', 'inviar.art')
                     ->select('invart.art','des1','precio_vta0','precio_vta1'
@@ -257,5 +287,6 @@ class ArticuloController extends Controller
 
         return response()->json($array);
     }
+
 
 }

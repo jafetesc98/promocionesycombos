@@ -112,6 +112,21 @@ class PromocionController extends Controller
                     ->where('art', $value['cve'])
                     ->where('alm',$datos['precBase'])
                     ->first();
+
+                    $sub_alm;
+                if($value['emp_cob']=='CJA'){
+                    $sub_alm=$datos['precBase'].'C';
+                }if($value['emp_cob']=='PAQ'){
+                    $sub_alm=$datos['precBase'].'M';
+                }
+
+
+                $fact = DB::table('invars')
+                ->select(DB::raw('fac_minimo'))
+                ->where('cve_art', $value['cve'])
+                ->where('alm', $datos['precBase'])
+                ->where('sub_alm', $sub_alm)
+                ->first();
                     //return response()->json($sucSelected);
             $prmdet = new PromocionDetPYC;
             $prmdet->id_pyc_prom = $promocion_pyc->id;
@@ -146,10 +161,13 @@ class PromocionController extends Controller
 
             //Si es promocion de Regalo
             else if($datos['tipo'] == 5){
+                
+               
                 //$prmdet->cve_art = $value['cod_cob'];
                 //$prmdet->des_art = $value['desc_cob'];
                 $prmdet->sin_cargo = 'S';
-                $prmdet->cobradas = $value['cobradas'];
+                //$prmdet->cobradas = $value['cobradas'];
+                $prmdet->cobradas = $value['cobradas']*$fact->fac_minimo;
                 $prmdet->regaladas = $value['regaladas'];
                 $prmdet->art_reg = $value['cod_reg'];
                 $prmdet->emp_reg = $value['emp_reg'];
@@ -167,10 +185,25 @@ class PromocionController extends Controller
             
             //Si es promocion hibirida
             else if($datos['tipo'] == 6){
+                $sub_alm;
+                if($value['emp_cob']=='CJA'){
+                    $sub_alm=$datos['precBase'].'C';
+                }if($value['emp_cob']=='PAQ'){
+                    $sub_alm=$datos['precBase'].'M';
+                }
+
+
+                $fact = DB::table('invars')
+                ->select(DB::raw('fac_minimo'))
+                ->where('cve_art', $value['cve'])
+                ->where('alm', $datos['precBase'])
+                ->where('sub_alm', $sub_alm)
+                ->get();
                 //$prmdet->cve_art = $value['cod_cob'];
                 //$prmdet->des_art = $value['desc_cob'];
                 $prmdet->sin_cargo = 'S';
-                $prmdet->cobradas = $value['cobradas'];
+                //$prmdet->cobradas = $value['cobradas'];
+                $prmdet->cobradas = $value['cobradas']*$fact->fac_minimo;
                 $prmdet->regaladas = $value['regaladas'];
                 $prmdet->art_reg = $value['cod_reg'];
                 $prmdet->emp_reg = $value['emp_reg'];
