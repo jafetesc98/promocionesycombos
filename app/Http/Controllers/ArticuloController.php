@@ -20,21 +20,21 @@ class ArticuloController extends Controller
         $sucursal = $request->input('suc','001');
         $art = $request->input('art','0');
         $proveedor = $request->input('prov','0');
-        $empaque = $request ->input('empaque');
+        $emp_cob = $request ->input('emp_cob');
 
 
         //////////busqueda de factor minimo en la tabla invars///////////
-        if($empaque=='otro' || $empaque==''){
+        if($emp_cob=='otro' || $emp_cob==''){
 
         }else{
 
-        if($empaque=='PZA'){
+        if($emp_cob=='PZA'){
 
         }else{
         $sub_alm;
-                if($empaque=='CJA'){
+                if($emp_cob=='CJA'){
                     $sub_alm=$sucursal.'C';
-                }if($empaque=='PAQ'){
+                }if($emp_cob=='PAQ'){
                     $sub_alm=$sucursal.'M';
                 }
 
