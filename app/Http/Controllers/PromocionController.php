@@ -150,6 +150,8 @@ class PromocionController extends Controller
             else if($datos['tipo'] == 5){
                 //return print_r($value);
                 $sub_alm='';
+                $fac_min;
+                if($value['emp_cob']!='PZA'){
                     
                 if($value['emp_cob']=='CJA'){
                     $sub_alm=$datos['precBase'].'C';
@@ -164,13 +166,18 @@ class PromocionController extends Controller
                 ->where('alm', $datos['precBase'])
                 ->where('sub_alm', $sub_alm)
                 ->first();
-                
+
+                $fac_min=$fact->fac_minimo;
+
+                } else{
+                    $fac_min=1;
+                } 
                
                 //$prmdet->cve_art = $value['cod_cob'];
                 //$prmdet->des_art = $value['desc_cob'];
                 $prmdet->sin_cargo = 'S';
                 //$prmdet->cobradas = $value['cobradas'];
-                $prmdet->cobradas = $value['cobradas']*$fact->fac_minimo;
+                $prmdet->cobradas = $value['cobradas']*$fac_min;
                 $prmdet->regaladas = $value['regaladas'];
                 $prmdet->art_reg = $value['cod_reg'];
                 $prmdet->emp_reg = $value['emp_reg'];
