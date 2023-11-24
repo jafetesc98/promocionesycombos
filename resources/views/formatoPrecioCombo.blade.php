@@ -18,7 +18,7 @@
                         <b><h2>FORMATO DE OFERTAS Y PROMOCIONES</h2></b>
                         <!--<p>'.$preciosImprimir[0]["tipo"].': ID('.$preciosImprimir[0]["idtemp"].')</p>-->
                         
-                        <p><b>PROMOCIÓN MERCANCÍA SIN CARGO : ID({{$prom['id']}})</b></p>
+                        <p><b>PRECIO ESPECIFICO: ID({{$prom['id']}})</b></p>
                         
                         </td>
                         <td colspan="2" align="center" id="2">
@@ -31,11 +31,12 @@
                             <br>
                         </td>
                     </tr>
+                    
 
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"> </td>-->
-                        <td scope="col" align="center" style="background-color: #ccc">PROVEEDOR</td>
-                        <td scope="col" align="center" colspan="4">{{$prom['proveedor']}} - {{$prom['nom_prov']}}</td>
+                        <td scope="col" align="center" style="background-color: #ccc">NOMBRE</td>
+                        <td scope="col" align="center" colspan="4">{{$prom['desProm']}}</td>
                         <td scope="col" align="center" colspan="2" style="background-color: #ccc">DESCRIPCION DE OFERTA</td>
                         <td scope="col" align="center" colspan="3">
                             @if($prom['paga'] == 1)
@@ -46,7 +47,7 @@
                             PAGAN AMBOS
                             @endif
                         </td>
-                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
+                        <td style="width:15px;" align="center" class="margen"></td>
                     </tr>
 
                     
@@ -76,74 +77,66 @@
                         <!--<td style="width:15px;" align="center" class="margen"> </td>-->
                         <td scope="col" rowspan="2" align="center" style="background-color: #ccc">PARA</td>
                         <td scope="col"  align="center" colspan="9" style="max-width:650px; border-bottom: 0;">{{implode(", ", $sucs)}}</td>
-                        <td style="width:15px;" align="center" class="margen"></td>
+                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
                     </tr>
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"> </td>-->
                          <td scope="col" align="center" colspan="9" style="max-width:650px; border-top: 0;"></td>
-                        <td style="width:15px;" align="center" class="margen"></td>
+                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
                     </tr>
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"> </td>-->
                         <td scope="col" align="center" colspan="2" style="background-color: #ccc">APLICA A</td>
                         
-                        <td scope="col" align="center" colspan="3">{{$prom['mostrador'] ? "MOSTRADOR" : ""}} {{$prom['retail'] ? " RETAIL" : ""}}</td>
+                        <td scope="col" align="center" colspan="3">{{$prom['retail'] ? " RETAIL" : ""}}</td>
 
                         <td scope="col" align="center" colspan="2" style="background-color: #ccc">TIPO INDICADOR</td>
                         
                         <td scope="col" align="center" colspan="3"><?php if($prom['indicador']==0){echo 'BAJA DE PRECIO';}else{echo 'PROMOCION';}; ?></td>
                         
-                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
+                        <td style="width:15px;" align="center" class="margen"></td>
                     </tr>
                     <tr>
-                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
+                        <td style="border: 0; font-size:3px" colspan="12" class="saltos">
                             <br>
                         </td>
                     </tr>
-                
+
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <th scope="col" align="center" style="background-color: #ccc" colspan="2">COMPRANDO</th>
-                        <th scope="col" align="center" colspan="3" style="background-color: #ccc">DE LA CVE</th>
-                        <th scope="col" align="center" style="background-color: #ccc" colspan="2">SE REGALAN</th>
-                        <th scope="col" align="center" colspan="3" style="background-color: #ccc">DE LA CLAVE</th>
-                    </tr>
-
-
-
-
-
-
-                    {{--@foreach ($arts as $art)--}}
-                    @for ($j = $i*31; $j < (($i+1) * 31); $j++)
-                        @if($j == $total)
-                        
-                        @break
-                        @endif
-                    <!--Hasta aqui vamos aqui flta imprimir precios-->
-                   <tr>
-                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
-                        <td align="center"><b>{{intval($arts[$j]['cobradas'])}}</b></td>
-                        <td align="center"><b>PZS</b></td>
-                        <td align="center"><b>{{$arts[$j]['cve_art']}}</b></td>
-                        <td align="center" colspan="2" style="font-size:9px"><b>{{$arts[$j]['des_art']}}</b></td>
-                        <td align="center">{{intval($arts[$j]['regaladas'])}}</td>
-                        <td align="center">{{$arts[$j]['emp_reg']}}</td>
-                        
-                        <td align="center">{{$arts[$j]['art_reg']}}</td>
-                        
-                        <td align="center" colspan="2">{{$arts[$j]['desc_reg']}}</td>
-                        
-                        <!--<td align="center">'.$preciosImprimir[$registrosimpresos]["segundoPrecio_ofer0"].'</td>
-                        <td align="center">'.$preciosImprimir[$registrosimpresos]["segundaDifer0"].'</td>
+                        <th scope="col" align="center" colspan="2" style="background-color: #ccc">CODIGO</th>
+                        <th scope="col" align="center" colspan="8" style="background-color: #ccc">DESCRIPCIÓN</th>
+                        <!--<th scope="col" align="center" style="background-color: #ccc">PRECIO OFTA</th>
+                        <th scope="col" align="center" style="background-color: #ccc">DIFERENCIA</th>
                         <td style="width:15px;" align="center" class="margen"></td>-->
-
-                        <tr style="border: 0;">
-                            <td style="border: 0; background-color: #E2E2E2; font-size:3px" colspan="10" class="saltos">
-                            .</td>
-                        </tr>
+                    </tr>
+                
+                    {{--@foreach ($arts as $art)--}}
+                    @for ($j = $i*15; $j < (($i+1) * 15); $j++)
+                    @if($j == $total)
+                    
+                    @break
+                    @endif
+                    <!--Hasta aqui vamos aqui flta imprimir precios-->
+                    <tr>
+                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
+                        <td align="center" colspan="2" style="background-color: #ccc"><b>{{$arts[$j]['cve_art']}}</b></td>
+                        <td align="center"  colspan="8" style="font-size:9px; background-color: #ccc"><b>{{$arts[$j]['des_art']}}</b></td>
+                        
+                    </tr>
+                    <tr>
+                        <!--<td style="width:15px;" align="center" class="margen"></td>-->
+                        <td align="center" colspan="2"><b>APLICAR A SIMILARES <br><?php if($prom['inc_similares']=='N'){echo 'NO';}else{echo 'SI';}; ?></b></td>
+                        <td align="center"  colspan="8" style="font-size:9px"><b>{{$arts[$j]['cantidad']." "}} PIEZAS DE LA CLAVE {{ $arts[$j]['cve_art']." ".$arts[$j]['des_art']}} POR ${{$arts[$j]['cantidad']*$arts[$j]['precio_0']}}</b></td>
+                        
                     </tr>
                     
+                    
+                    <tr style="border: 0;">
+                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
+                            .
+                        </td>
+                    </tr>
                     @endfor
                     <!--aqui termino un for-->
         
@@ -153,35 +146,13 @@
                         </td>
                     </tr>
 
-                    <tr style="border: 0;">
-                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
-                            .
-                        </td>
-                    </tr>
-                    <tr style="border: 0;">
+                     <tr style="border: 0;">
                         <td style="border: 0; font-size:3px" colspan="11" class="saltos">
                             .
                         </td>
                     </tr>
 
-                    <tr style="border: 0;">
-                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
-                            .
-                        </td>
-                    </tr>
-
-                    <tr style="border: 0;">
-                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
-                            .
-                        </td>
-                    </tr>
-
-                    <tr style="border: 0;">
-                        <td style="border: 0; font-size:3px" colspan="11" class="saltos">
-                            .
-                        </td>
-                    </tr>
-
+                    
                     <tr style="border: 0;">
                         <td colspan="3" class="saltos" align="center" style="height:5px; border: 0;">___________________________</td>
                         <td colspan="4" class="saltos" align="center" style="height:5px; border: 0;">___________________________</td>
@@ -194,7 +165,7 @@
                     </tr>
                     <tr style="border: 0; ">
                         <td colspan="3" class="saltos" align="center" style="height:5px; border: 0;">ISRAEL DOMINGUEZ VELA</td>
-                        <td colspan="4" class="saltos" align="center" style="height:5px; border: 0;">{{$firmaUser->Nombre}}</td>
+                       <td colspan="4" class="saltos" align="center" style="height:5px; border: 0;">{{$user}}</td>
                         <td colspan="3" class="saltos" align="center" style="height:5px; border: 0;"></td>
                     </tr>
 
@@ -205,15 +176,11 @@
                 <div class="page-break"></div>
                 @endif
                 @endfor
+                
             </div>
         </div>
-       
     </div>
-
-
-
-
-
+        
         <style>@page {
         
          margin: 0;

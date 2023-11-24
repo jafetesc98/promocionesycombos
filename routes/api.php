@@ -63,3 +63,12 @@ Route::get('/acurdoformato', [App\Http\Controllers\PromocionController::class, '
 
 //formato
 Route::get('/formato', [App\Http\Controllers\PromocionController::class, 'formato']);
+
+//aqui empiezan las rutas de combos
+Route::post('/crea-cmb', [App\Http\Controllers\CombosController::class, 'crearPreCombos']);
+
+Route::post('/upd-cmb', [App\Http\Controllers\CombosController::class, 'editarPreCombo']);
+
+Route::post('/rechazar-cmb', [App\Http\Controllers\CombosController::class, 'denegarCombo']);
+
+Route::post('/aut-cmb', [App\Http\Controllers\CombosController::class, 'creaComboMks']);

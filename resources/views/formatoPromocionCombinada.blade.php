@@ -125,7 +125,7 @@
 
 
 
-                    @for ($j = $i*30; $j < (($i+1) * 30); $j++)
+                    @for ($j = $i*29; $j < (($i+1) * 29); $j++)
                         @if($j == $total)
                         
                         @break
@@ -334,7 +334,7 @@
                     </tr>
                 
                     {{--@foreach ($arts as $art)--}}
-                    @for ($j = $i*9; $j < (($i+1) * 9); $j++)
+                    @for ($j = $i*8; $j < (($i+1) * 8); $j++)
                     @if($j == $total)
                     
                     @break

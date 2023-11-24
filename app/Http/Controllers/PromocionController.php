@@ -12,6 +12,9 @@ use App\Models\Articulo;
 use App\Models\Proveedor;
 use App\Models\PromocionMKS;
 use App\Models\PromocionDetMKS;
+use App\Models\CombosPYC;
+use App\Models\CombosDetPYC;
+use App\Models\CombosSucPYC;
 use Illuminate\Support\Facades\DB;
 
 class PromocionController extends Controller
@@ -195,26 +198,40 @@ class PromocionController extends Controller
             
             //Si es promocion hibirida
             else if($datos['tipo'] == 6){
-                $sub_alm='';
+                
                     
-                if($value['emp_cob']=='CJA'){
-                    $sub_alm=$datos['precBase'].'C';
-                }if($value['emp_cob']=='PAQ'){
-                    $sub_alm=$datos['precBase'].'M';
-                }
-
-
-                $fact = DB::table('invars')
-                ->select(DB::raw('fac_minimo'))
-                ->where('cve_art', $value['cve'])
-                ->where('alm', $datos['precBase'])
-                ->where('sub_alm', $sub_alm)
-                ->first();
+                if($value['emp_cob']!='PZA'){
+                    
+                    if($value['emp_cob']=='CJA'){
+                        $sub_alm=$datos['precBase'].'C';
+                    }if($value['emp_cob']=='PAQ'){
+                        $sub_alm=$datos['precBase'].'M';
+                    }
+    
+    
+                    $fact = DB::table('invars')
+                    ->select(DB::raw('fac_minimo'))
+                    ->where('cve_art', $value['cve'])
+                    ->where('alm', $datos['precBase'])
+                    ->where('sub_alm', $sub_alm)
+                    ->first();
+    
+                    $fac_min=$fact->fac_minimo;
+    
+                    } else{
+                        $fac_min=1;
+                    } 
+                
                 //$prmdet->cve_art = $value['cod_cob'];
                 //$prmdet->des_art = $value['desc_cob'];
                 $prmdet->sin_cargo = 'S';
                 //$prmdet->cobradas = $value['cobradas'];
-                $prmdet->cobradas = $value['cobradas']*$fact->fac_minimo;
+                if($value['emp_cob']=='PZA'){
+                    $prmdet->cobradas = $value['cobradas'];
+                }else{
+                    $prmdet->cobradas = $value['cobradas']*$fact->fac_minimo;
+                }
+                
                 $prmdet->regaladas = $value['regaladas'];
                 $prmdet->art_reg = $value['cod_reg'];
                 $prmdet->emp_reg = $value['emp_reg'];
@@ -240,14 +257,25 @@ class PromocionController extends Controller
     
 
     public function getPromocionesXComprador(Request $request){
+
         $comprador = $request->input('compr', -1);
         $promociones = PromocionPYC::where('u_alt',$comprador)
                         ->leftJoin('cprprv', 'pyc_prmhdr.proveedor','=','cprprv.proveedor')
-                        ->select('pyc_prmhdr.*','cprprv.nom as nom_prov')
+                        ->select('pyc_prmhdr.*','cprprv.nom as nom_prov');
+                        //->orderByDesc('updated_at')
+                        //->get()
+                        //->toArray();
+        
+        $combos = CombosPYC::where('u_alt',$comprador)
+                        ->leftJoin('cprprv', 'pyc_invhcm.proveedor','=','cprprv.proveedor')
+                        ->select('pyc_invhcm.*','cprprv.nom as nom_prov')
+                        ->union($promociones)
                         ->orderByDesc('updated_at')
                         ->get()
-                        ->toArray();
-        return response()->json($promociones);
+                        ->toArray(); 
+
+
+        return response()->json($combos);
     }
 
     public function getAllPromociones(Request $request){
@@ -255,11 +283,21 @@ class PromocionController extends Controller
         $promociones = PromocionPYC::
         //where('u_alt',$comprador)
                         leftJoin('cprprv', 'pyc_prmhdr.proveedor','=','cprprv.proveedor')
-                        ->select('pyc_prmhdr.*','cprprv.nom as nom_prov')
+                        ->select('pyc_prmhdr.*','cprprv.nom as nom_prov');
+                        //->orderByDesc('updated_at')
+                        //->get()
+                        //->toArray();
+        //return response()->json($promociones);
+        $combos = CombosPYC:://where('u_alt',$comprador)
+                        leftJoin('cprprv', 'pyc_invhcm.proveedor','=','cprprv.proveedor')
+                        ->select('pyc_invhcm.*','cprprv.nom as nom_prov')
+                        ->union($promociones)
                         ->orderByDesc('updated_at')
                         ->get()
-                        ->toArray();
-        return response()->json($promociones);
+                        ->toArray(); 
+
+
+        return response()->json($combos);
     }
 
     public function getPromAut(Request $request){
@@ -267,24 +305,63 @@ class PromocionController extends Controller
         $promociones = PromocionPYC::
                         whereIn('status', [-1,0])
                         ->rightJoin('cprprv', 'pyc_prmhdr.proveedor','=','cprprv.proveedor')
-                        ->select('pyc_prmhdr.*','cprprv.nom as nom_prov')
+                        ->select('pyc_prmhdr.*','cprprv.nom as nom_prov');
+                        /* ->orderByDesc('updated_at')
+                        ->get()
+                        ->toArray(); */
+
+        $combos = CombosPYC::whereIn('status', [-1,0])
+                        ->leftJoin('cprprv', 'pyc_invhcm.proveedor','=','cprprv.proveedor')
+                        ->select('pyc_invhcm.*','cprprv.nom as nom_prov')
+                        ->union($promociones)
                         ->orderByDesc('updated_at')
                         ->get()
-                        ->toArray();
-        return response()->json($promociones);
+                        ->toArray(); 
+        return response()->json($combos);
     }
 
     public function getDetallePromocion(Request $request){
         $idprom = $request->input("idprom","-1");
         $comprador = $request->input("compr","-1");
-        $promo = PromocionPYC::where('id',$idprom)
+        
+        $datos1 = explode(" ", $idprom);
+        //return print_r($datos);
+        $id=$datos1[0];
+
+        $tipo=$datos1[1];
+
+        //return print_r("tipo: ".$tipo. " idPromo:".$id );
+
+        if($tipo==2 || $tipo==3 ){
+
+        $combos = CombosPYC::where('id',$id)
+            ->leftJoin('cprprv', 'pyc_invhcm.proveedor','=','cprprv.proveedor')
+            ->select('pyc_invhcm.*','cprprv.nom as nom_prov')
+            ->get()->first()
+            ->toArray(); 
+
+            $alm=substr($combos['suc_prec_base'],0,3);
+
+        $detprom = CombosDetPYC::where('id_pyc_cmb',$id )
+                    ->where('invart.alm','=',$alm)
+                    ->join('invart', 'pyc_invdcm.cve_art','=','invart.art')
+                    ->select('pyc_invdcm.*','invart.precio_vta0 as precio_cat_art') 
+                    ->get()->toArray();
+
+        $suc = CombosSucPYC::where('cmb_id',$id)->select('suc')->get()->toArray();
+
+        $datos = array('prom' => $combos, 'arts' => $detprom, 'suc' => $suc );
+        return response()->json($datos);
+
+        }else{
+        $promo = PromocionPYC::where('id',$id)
                     ->leftJoin('cprprv', 'pyc_prmhdr.proveedor','=','cprprv.proveedor')
                     ->select('pyc_prmhdr.*','cprprv.nom as nom_prov')
                     ->get()->first()
                     ->toArray();
-        $detprom = PromocionDetPYC::where('id_pyc_prom',$idprom)
+        $detprom = PromocionDetPYC::where('id_pyc_prom',$id)
                     ->get()->toArray();
-        $suc = PromocionSucPYC::where('prm_id',$idprom)->select('suc')->get()->toArray();
+        $suc = PromocionSucPYC::where('prm_id',$id)->select('suc')->get()->toArray();
 
         //Agregando factor de empaques
         foreach ($detprom as $key => $value) {
@@ -313,6 +390,7 @@ class PromocionController extends Controller
 
         $datos = array('prom' => $promo, 'arts' => $detprom, 'suc' => $suc );
         return response()->json($datos);
+        }
     }
 
 
@@ -529,27 +607,60 @@ class PromocionController extends Controller
         $comprador = $request->input("compr","-1");
         $usuario = UserPyc::where('cve_corta', $comprador)->first();
 
+        $datos1 = explode(" ", $idprom);
+        //return print_r($datos);
+        $id=$datos1[0];
+
+        $tipo=$datos1[1];
+
         /* $permiso = DB::table('pyc_roles_permisos')
                             ->where('rol_id',$usuario->id)
                             ->first();
         if(is_null($permiso)){
             return 'es lamentable';
         } */
+        if($tipo==2 || $tipo==3 ){
+            $combos = CombosPYC::where('id',$id)->first();
+            if($combos->status == -1){
+                $combos->status = 0;
+                $combos->save();
+            }
 
-        $promo = PromocionPYC::where('id',$idprom)->first();
+            $combos = CombosPYC::where('id',$id)
+                ->leftJoin('cprprv', 'pyc_invhcm.proveedor','=','cprprv.proveedor')
+                ->select('pyc_invhcm.*','cprprv.nom as nom_prov')
+                ->get()->first()
+                ->toArray(); 
+    
+                $alm=substr($combos['suc_prec_base'],0,3);
+    
+            $detprom = CombosDetPYC::where('id_pyc_cmb',$id )
+                        ->where('invart.alm','=',$alm)
+                        ->join('invart', 'pyc_invdcm.cve_art','=','invart.art')
+                        ->select('pyc_invdcm.*','invart.precio_vta0 as precio_cat_art') 
+                        ->get()->toArray();
+    
+            $suc = CombosSucPYC::where('cmb_id',$id)->select('suc')->get()->toArray();
+    
+            $datos = array('prom' => $combos, 'arts' => $detprom, 'suc' => $suc );
+            return response()->json($datos);
+    
+            }else{
+
+        $promo = PromocionPYC::where('id',$id)->first();
         if($promo->status == -1){
             $promo->status = 0;
             $promo->save();
         }
         
-        $promo = PromocionPYC::where('id',$idprom)
+        $promo = PromocionPYC::where('id',$id)
                     ->leftJoin('cprprv', 'pyc_prmhdr.proveedor','=','cprprv.proveedor')
                     ->select('pyc_prmhdr.*','cprprv.nom as nom_prov')
                     ->get()->first()
                     ->toArray();
-        $detprom = PromocionDetPYC::where('id_pyc_prom',$idprom)
+        $detprom = PromocionDetPYC::where('id_pyc_prom',$id)
                     ->get()->toArray();
-        $suc = PromocionSucPYC::where('prm_id',$idprom)->select('suc')->get()->toArray();
+        $suc = PromocionSucPYC::where('prm_id',$id)->select('suc')->get()->toArray();
 
         //Agregando factor de empaques
         foreach ($detprom as $key => $value) {
@@ -579,6 +690,7 @@ class PromocionController extends Controller
         $datos = array('prom' => $promo, 'arts' => $detprom, 'suc' => $suc );
         return response()->json($datos);
     }
+    }
 
     public function creaPromoMks(Request $request)
     {
@@ -586,6 +698,11 @@ class PromocionController extends Controller
         $idprom = $request->input("idprom","-1");
         $comprador = $request->input("compr","-1");
         $usuario = UserPyc::where('cve_corta', $comprador)->first();
+        $datos1 = explode(" ", $idprom);
+        //return print_r($datos);
+        $id=$datos1[0];
+
+        $tipo=$datos1[1];
 
         //return response()->json($comprador);
 
@@ -635,10 +752,10 @@ class PromocionController extends Controller
         //return response()->json($consec_aplicar);
         DB::beginTransaction();
 
-        $promocion_pyc = PromocionPYC::where('id',$idprom)->first();
-        $sucursales = PromocionSucPYC::where('prm_id', $idprom)->get()->toArray();
+        $promocion_pyc = PromocionPYC::where('id',$id)->first();
+        $sucursales = PromocionSucPYC::where('prm_id', $id)->get()->toArray();
         $dat = '';
-        $articulos = PromocionDetPYC::where('id_pyc_prom',$idprom)->get();
+        $articulos = PromocionDetPYC::where('id_pyc_prom',$id)->get();
 
         //Insertando registros en prmhdr por cada sucursal
         foreach ($sucursales as $key => $value) {
@@ -992,6 +1109,12 @@ class PromocionController extends Controller
         $comprador = $request->input("compr","-1");
         $usuario = UserPyc::where('cve_corta', $comprador)->first();
 
+        $datos1 = explode(" ", $idprom);
+        //return print_r($datos);
+        $id=$datos1[0];
+
+        $tipo=$datos1[1];
+
         //return response()->json($comprador);
 
        /*  if(is_null($usuario)){
@@ -1025,7 +1148,7 @@ class PromocionController extends Controller
             }
         } */
 
-        $promocion_pyc = PromocionPYC::where('id',$idprom)->first();
+        $promocion_pyc = PromocionPYC::where('id',$id)->first();
         $promocion_pyc->status = 2;
         try{
             $promocion_pyc->save();
@@ -1058,9 +1181,21 @@ class PromocionController extends Controller
             $puesto = 'COMPRASJE';   
         }
         if(str_contains($puesto, 'COMPRASJE') || str_contains($puesto, 'TRADEMKT') || strtoupper($comprador) == 'PYC'){
+
+            $combos = CombosPYC:://where('u_alt',$comprador)
+                        leftJoin('cprprv', 'pyc_invhcm.proveedor','=','cprprv.proveedor')
+                        ->select('pyc_invhcm.*','cprprv.nom as nom_prov');
+                        
+                        //->orderByDesc('updated_at')
+                        //->get()
+                        //->toArray(); 
+
+
+        //return response()->json($combos);
             $promociones = PromocionPYC::where('pyc_prmhdr.status', 1)
                         ->leftJoin('cprprv', 'pyc_prmhdr.proveedor','=','cprprv.proveedor')
                         ->select('pyc_prmhdr.*','cprprv.nom as nom_prov')
+                        ->union($combos)
                         ->orderByDesc('updated_at')
                         ->get()
                         ->toArray();
@@ -1112,16 +1247,24 @@ class PromocionController extends Controller
     public function formato(Request $request){
         //$idprom = $request->input("idprom","2");
         $idprom = $request->input("idprom","-1");
-        $promo = PromocionPYC::where('id',$idprom)
+        //$nom_cto = $request->input("nom_cto","-1");
+
+        $datos1 = explode(" ", $idprom);
+        //return print_r($datos);
+        $id=$datos1[0];
+        $tipo=$datos1[1];
+       // return $tipo;
+        if($tipo==1 || $tipo==5 || $tipo==6){
+        $promo = PromocionPYC::where('id',$id)
                     ->leftJoin('cprprv', 'pyc_prmhdr.proveedor','=','cprprv.proveedor')
                     ->select('pyc_prmhdr.*','cprprv.nom as nom_prov')
                     ->get()->first()
                     ->toArray();
-        $detprom = PromocionDetPYC::where('id_pyc_prom',$idprom)
+        $detprom = PromocionDetPYC::where('id_pyc_prom',$id)
                     ->get()->toArray();
 
                     //return $promo;
-        $suc = PromocionSucPYC::where('prm_id',$idprom)->select('suc')->get()->pluck('suc')->toArray();
+        $suc = PromocionSucPYC::where('prm_id',$id)->select('suc')->get()->pluck('suc')->toArray();
         //return response()->json($suc);
 
         $firmaUser="";
@@ -1186,29 +1329,18 @@ class PromocionController extends Controller
             $capturo = UserMKS::where('nom_cto', $promo['u_alt'])->first();
             $user = $capturo['nombre_lar'];
         }
-
-
         $datos = array('prom' => $promo, 'arts' => $detprom, 'suc' => $suc );
 
         $data = [ 'titulo' => 'Formato de Ofertas y promociones'];
         $numHojas = count($detprom);
-        //$numHojas = 45;
 
-        
-
-        /*$pdf = \PDF::loadView('formatoPromocion', [
-            'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
-            'numHojas' => $numHojas, 'total' => (count($detprom) )]);
-
-        return $pdf->stream('formato.pdf');*/
-        //return response()->json($detprom);
         if($promo['tpoProm'] == 1){
             //Sobre 9 porque son los art que caben en una hoja para prom de precio
-            $residuo = $numHojas % 9;
+            $residuo = $numHojas % 8;
             if($residuo == 0){
-                $numHojas = intval($numHojas / 9);
+                $numHojas = intval($numHojas / 8);
             }else{
-                $numHojas = intval(($numHojas / 9) + 1);
+                $numHojas = intval(($numHojas / 8) + 1);
             }
             $pdf = \PDF::loadView('formatoPromocion', [
             'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
@@ -1221,14 +1353,13 @@ class PromocionController extends Controller
                 'numHojas' => $numHojas, 'total' => (count($detprom)), 'firmaUser'=>$firmaUser
             ]);
         }
-        
         if($promo['tpoProm'] == 5){
             //Sobre 32 porque son los art que caben en una hoja para prom de regalo
-            $residuo = $numHojas % 32;
+            $residuo = $numHojas % 31;
             if($residuo == 0){
-                $numHojas = intval($numHojas / 32);
+                $numHojas = intval($numHojas / 31);
             }else{
-                $numHojas = intval(($numHojas / 32) + 1);
+                $numHojas = intval(($numHojas / 31) + 1);
             }
             $pdf = \PDF::loadView('formatoPromocionRegalo', [
                 'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
@@ -1244,19 +1375,19 @@ class PromocionController extends Controller
         }
             
         if($promo['tpoProm'] == 6){
-            $residuo = $numHojas % 30;
+            $residuo = $numHojas % 29;
             if($residuo == 0){
-                $numHojas = intval($numHojas / 30);
+                $numHojas = intval($numHojas / 29);
             }else{
-                $numHojas = intval(($numHojas / 30) + 1);
+                $numHojas = intval(($numHojas / 29) + 1);
             }
 
-            $residuo2 = (count($detprom) ) % 9;
+            $residuo2 = (count($detprom) ) % 8;
             $numHojas2 = count($detprom);
             if($residuo2 == 0){
-                $numHojas2 = intval($numHojas2 / 9);
+                $numHojas2 = intval($numHojas2 / 8);
             }else{
-                $numHojas2 = intval(($numHojas2 / 9) + 1);
+                $numHojas2 = intval(($numHojas2 / 8) + 1);
             }
 
 
@@ -1272,6 +1403,121 @@ class PromocionController extends Controller
                 'numHojas' => $numHojas, 'total' => (count($detprom) ), 'firmaUser'=>$firmaUser
             ]);
         }
+        }
+
+        if($tipo==2 || $tipo==3 ){
+
+        if($tipo==2  ){
+        $promo = CombosPYC::where('id',$id)
+            ->get()->first()
+            ->toArray();
+        }
+        if($tipo==3){
+            $promo = CombosPYC::where('id',$id)
+                ->leftJoin('cprprv', 'pyc_invhcm.proveedor','=','cprprv.proveedor')
+                ->select('pyc_invhcm.*','cprprv.nom as nom_prov')
+                ->get()->first()
+                ->toArray();
+            }
+        
+        $detprom = CombosDetPYC::where('id_pyc_cmb',$id)
+                    ->get()->toArray();
+
+                    //return $promo;
+        $suc = CombosSucPYC::where('cmb_id',$id)->select('suc')->get()->pluck('suc')->toArray();
+        //return response()->json($suc);
+
+        $firmaUser="";
+        if($tipo==3){
+        if (strpos($promo['folio_ac'], '*') !== false) {
+            $cadena = $promo['folio_ac'];
+            $separador = " ";
+            $fol = explode($separador, $cadena);
+            $apoyos = DB::table('Rca_ApoyosDir')
+            ->select(DB::raw("Folio + '*' as Folio,Comprador, Nombre, Linea1, 'APOYOS DIRECCION' as boletin, fecApoyo as Fecha"))
+            ->where('Folio',$fol[0])
+            ->get();
+
+            foreach ($apoyos as &$apoyos) {
+                $firmaUser = $apoyos ;
+            }
+            //return  $firmaUser->Nombre;
+        }else{
+            $cadena = $promo['folio_ac'];
+            $separador = " ";
+            $fol = explode($separador, $cadena);
+            $acuerdos = DB::table('Rca_Acuerdos')
+                     ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
+                    ->where('Folio', $fol[0])
+                    ->get();
+
+            foreach ($acuerdos as &$acuerdos) {
+                 $firmaUser = $acuerdos ;
+            }
+            //return  $firmaUser->Nombre;
+        
+        }
+        }else{
+        
+            //return $usu;
+            $usuario = UserMKS::where('nom_cto',$promo['u_alt'])
+                    ->select(DB::raw("nombre_lar"))
+                     ->get()->toArray();
+
+            $firmaUser = $usuario;
+            //return $firmaUser;  
+        }
+        $user = "ADMIN";
+        if(strtoupper($promo['u_alt']) != 'PYC' ){
+            $capturo = UserMKS::where('nom_cto', $promo['u_alt'])->first();
+            $user = $capturo['nombre_lar'];
+        }
+        $datos = array('prom' => $promo, 'arts' => $detprom, 'suc' => $suc );
+
+        $data = [ 'titulo' => 'Formato de Ofertas y promociones'];
+        $numHojas = count($detprom);
+
+    }
+        if($tipo == 3){
+            //Sobre 9 porque son los art que caben en una hoja para prom de precio
+            $residuo = $numHojas % 15;
+            if($residuo == 0){
+                $numHojas = intval($numHojas / 15);
+            }else{
+                $numHojas = intval(($numHojas / 15) + 1);
+            }
+            $pdf = \PDF::loadView('formatoPrecioCombo', [
+            'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
+            'numHojas' => $numHojas, 'total' => (count($detprom) ), 'firmaUser'=>$firmaUser]);
+
+            return $pdf->stream('formato.pdf');
+
+            return view('formatoPrecioCombo', [
+                'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user,
+                'numHojas' => $numHojas, 'total' => (count($detprom)), 'firmaUser'=>$firmaUser
+            ]);
+        } 
+        if($tipo == 2){
+            //Sobre 9 porque son los art que caben en una hoja para prom de precio
+            $residuo = $numHojas % 47;
+            if($residuo == 0){
+                $numHojas = intval($numHojas / 47);
+            }else{
+                $numHojas = intval(($numHojas / 47) + 1);
+            }
+            $pdf = \PDF::loadView('formatoCombo', [
+            'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user, 
+            'numHojas' => $numHojas, 'total' => (count($detprom) ), 'firmaUser'=>$firmaUser]);
+
+            return $pdf->stream('formato.pdf');
+
+            return view('formatoCombo', [
+                'prom'=>$promo, 'arts'=>$detprom, 'sucs' => $suc, 'user' => $user,
+                'numHojas' => $numHojas, 'total' => (count($detprom)), 'firmaUser'=>$firmaUser
+            ]);
+        } 
+        
+        
             
         //return response()->json($datos);
     }

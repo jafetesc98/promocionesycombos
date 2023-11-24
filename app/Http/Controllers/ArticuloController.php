@@ -23,6 +23,38 @@ class ArticuloController extends Controller
         $emp_cob = $request ->input('emp_cob');
 
 
+        if($proveedor=='N'){
+
+            $arti = DB::table('inviar')->where('art', $art)->first();
+            
+            if (is_null($arti)) {
+                return response()->json(array(
+                    'code'      =>  422,
+                    'message'   =>  'El código del artículo no fue encontrado'
+                ), 422);  
+            }
+    
+            $articulo = DB::table('invart')
+                    ->leftJoin('inviar', 'invart.art', '=', 'inviar.art')
+                    ->select('invart.art','des1','precio_vta0','precio_vta1'
+                            ,'precio_vta2','precio_vta3','precio_vta4',
+                            'cant_pre0', 'cant_pre1', 'cant_pre2', 'cant_pre3',
+                             'cant_pre4', 'cve_pro')
+                    ->where('alm',$sucursal)
+                    ->where('invart.art',$art);
+        
+        $existeEnSuc = $articulo->first();
+
+        if(is_null($existeEnSuc)){
+            return response()->json(array(
+                'code'      =>  422,
+                'message'   =>  'El código capturado no existe en la sucursal seleccionada o está inactivo'
+            ), 422);  
+        }
+
+        return response()->json($existeEnSuc);
+
+        }else{
         //////////busqueda de factor minimo en la tabla invars///////////
         if($emp_cob=='otro' || $emp_cob==''){
 
@@ -93,7 +125,7 @@ class ArticuloController extends Controller
         }
         
         return response()->json($esSuProv);
-
+    }
     }
 
     public function apiLogin(Request $request){
@@ -200,7 +232,7 @@ class ArticuloController extends Controller
             $usuario = $user->nom_cto;
             $puesto = $user->puesto;
         }
-        if(str_contains($puesto, 'COMPRAS')){
+        if(str_contains($puesto, 'COMPRAS') || str_contains($puesto, 'TRADEMKT')){
            $acuerdos = DB::table('Rca_Acuerdos')
                         ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))
                         //->union($apoyos)
@@ -254,6 +286,7 @@ class ArticuloController extends Controller
                          }
                        //return $pila;
         }
+
        /*  else{
             $acuerdos = DB::table('Rca_Acuerdos')
                         ->select(DB::raw('Folio, Comprador, Nombre, Linea1, boletin, Fecha'))

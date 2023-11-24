@@ -121,7 +121,7 @@
                     </tr>
                 
                     {{--@foreach ($arts as $art)--}}
-                    @for ($j = $i*9; $j < (($i+1) * 9); $j++)
+                    @for ($j = $i*8; $j < (($i+1) * 8); $j++)
                     @if($j == $total)
                     
                     @break
