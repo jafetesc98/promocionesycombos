@@ -127,7 +127,7 @@
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"></td>-->
                         <td align="center" colspan="2"><b>APLICAR A SIMILARES <br><?php if($prom['inc_similares']=='N'){echo 'NO';}else{echo 'SI';}; ?></b></td>
-                        <td align="center"  colspan="8" style="font-size:9px"><b>{{$arts[$j]['cantidad']." "}} PIEZAS DE LA CLAVE {{ $arts[$j]['cve_art']." ".$arts[$j]['des_art']}} POR ${{$arts[$j]['cantidad']*$arts[$j]['precio_0']}}</b></td>
+                        <td align="center"  colspan="8" style="font-size:9px"><b>{{$arts[$j]['cantidad']." "}} PIEZAS DE LA CLAVE {{ $arts[$j]['cve_art']." ".$arts[$j]['des_art']}} POR ${{round($arts[$j]['precio_0'],2)}}</b></td>
                         
                     </tr>
                     

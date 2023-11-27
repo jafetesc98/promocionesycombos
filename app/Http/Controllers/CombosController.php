@@ -119,7 +119,7 @@ class CombosController extends Controller
             $invdcm->fac_sal=1;
 
             if($datos['tipo'] == 3){
-                $invdcm->precio_0 = number_format($value['regaladas']/$value['cobradas'], 2, '.', ',');
+                $invdcm->precio_0 = number_format($value['regaladas'], 2, '.', ',');
             }else{
                 $invdcm->precio_0 = $value['regaladas'];
             }
@@ -274,7 +274,7 @@ public function editarPreCombo(Request $request){
                 $invdcm->fac_sal=1;
     
                 if($datos['tipo'] == 3){
-                    $invdcm->precio_0 =  number_format($value['regaladas']/$value['cobradas'], 2, '.', ',');
+                    $invdcm->precio_0 =  number_format($value['regaladas'], 2, '.', ',');
                 }else{
                     $invdcm->precio_0 = $value['regaladas'];
                 }
@@ -610,7 +610,7 @@ public function creaComboMks(Request $request)
             $det_prom->des_art = $articulos[$i]->des_art;
             $det_prom->Emp = 'PZA';
             $det_prom->fac_sal=1;
-            $det_prom->precio_0 = $articulos[$i]->precio_0;
+            $det_prom->precio_0 = $articulos[$i]->precio_0/$articulos[$i]->cantidad;
             $det_prom->precio_1 = 0;
             $det_prom->precio_2 = 0;
             $det_prom->precio_3 = 0;

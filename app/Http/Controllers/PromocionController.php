@@ -506,23 +506,38 @@ class PromocionController extends Controller
             ), 421);
         }
 
-        //Insertando el detalle
         foreach ($articulos as $art => $value) {
             $a = DB::table('invart')
                     ->where('art', $value['cve'])
                     ->where('alm',$datos['precBase'])
                     ->first();
-
-                   
                     //return response()->json($sucSelected);
             $prmdet = new PromocionDetPYC;
             $prmdet->id_pyc_prom = $promocion_pyc->id;
             $prmdet->status = 1;
             $prmdet->cve_art = $value['cve'];
             $prmdet->des_art = $value['des1'];
-            
-            //array_key_exists(array_key, array_name)
-            
+            //$prmdet->sin_cargo = $value->cve;
+            //$prmdet->cobradas = $value->cve;
+            //$prmdet->regaladas = $value->cve;
+            //$prmdet->art_reg = $value->cve;
+            //$prmdet->emp_reg = $value->cve;
+            //$prmdet->fac_min_reg = $value->cve;
+            //$prmdet->precio_reg = $value->cve;
+
+            //Si precio no esta capturado ponemos el del cat art
+            $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : $value['precio1'];
+            $prmdet->precio_1 = is_null($value['precio2']) ? $a->precio_vta1 : $value['precio2'];
+            $prmdet->precio_2 = is_null($value['precio3']) ? $a->precio_vta2 : $value['precio3'];
+            $prmdet->precio_3 = is_null($value['precio4']) ? $a->precio_vta3 : $value['precio4'];
+            $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : $value['precio5'];
+
+            //return $a->precio_vta0;
+            /* $prmdet->precio_0 = !array_key_exists('precio1',$value) ? $a->precio_vta0 : $value['precio1'];
+            $prmdet->precio_1 = !array_key_exists('precio2',$value) ? $a->precio_vta1 : $value['precio2'];
+            $prmdet->precio_2 = !array_key_exists('precio3',$value) ? $a->precio_vta2 : $value['precio3'];
+            $prmdet->precio_3 = !array_key_exists('precio4',$value) ? $a->precio_vta3 : $value['precio4'];
+            $prmdet->precio_4 = !array_key_exists('precio5',$value) ? $a->precio_vta4 : $value['precio5']; */
             $prmdet->p_dsc_0 = 0.0;
             $prmdet->p_dsc_1 = 0.0;
             $prmdet->p_dsc_2 = 0.0;
@@ -530,13 +545,6 @@ class PromocionController extends Controller
 
             //Si es promocion de precio
             if($datos['tipo'] == 1){
-                //Si precio no esta capturado ponemos el del cat art
-                $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : round($value['precio1'], 2);
-                $prmdet->precio_1 = is_null($value['precio2']) ? $a->precio_vta1 : round($value['precio2'], 2);
-                $prmdet->precio_2 = is_null($value['precio3']) ? $a->precio_vta2 : round($value['precio3'], 2);
-                $prmdet->precio_3 = is_null($value['precio4']) ? $a->precio_vta3 : round($value['precio4'], 2);
-                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : round($value['precio5'], 2);
-                
                 $prmdet->sin_cargo = 'N';
                 $prmdet->cobradas = 0.0;
                 $prmdet->regaladas = 0.0;
@@ -544,91 +552,22 @@ class PromocionController extends Controller
                 //$prmdet->emp_reg = $value->cve;
                 $prmdet->fac_min_reg = 0.0;
                 $prmdet->precio_reg = 0.0;
-            }
-
-            //Si es promocion de Regalo
-            else if($datos['tipo'] == 5){
-                //return print_r($value);
-                $sub_alm='';
-                $fac_min;
-                if($value['emp_cob']!='PZA'){
-                    
-                if($value['emp_cob']=='CJA'){
-                    $sub_alm=$datos['precBase'].'C';
-                }if($value['emp_cob']=='PAQ'){
-                    $sub_alm=$datos['precBase'].'M';
-                }
-
-
-                $fact = DB::table('invars')
-                ->select(DB::raw('fac_minimo'))
-                ->where('cve_art', $value['cve'])
-                ->where('alm', $datos['precBase'])
-                ->where('sub_alm', $sub_alm)
-                ->first();
-
-                $fac_min=$fact->fac_minimo;
-
-                } else{
-                    $fac_min=1;
-                } 
-               
-                //$prmdet->cve_art = $value['cod_cob'];
-                //$prmdet->des_art = $value['desc_cob'];
+            } else if($datos['tipo'] == 5){
                 $prmdet->sin_cargo = 'S';
-                //$prmdet->cobradas = $value['cobradas'];
-                $prmdet->cobradas = $value['cobradas']*$fac_min;
-                $prmdet->regaladas = $value['regaladas'];
+                $prmdet->cobradas = $value['cobradas'];
+                $prmdet->regaladas = $value['regaladas'];;
                 $prmdet->art_reg = $value['cod_reg'];
                 $prmdet->emp_reg = $value['emp_reg'];
                 $prmdet->fac_min_reg = $value['fac_min_reg'];
                 $prmdet->precio_reg = 0.0;
                 $prmdet->desc_reg = $value['desc_reg'];
-
-                //Si precio no esta capturado ponemos el del cat art
-                $prmdet->precio_0 = $a->precio_vta0;
-                $prmdet->precio_1 = $a->precio_vta1;
-                $prmdet->precio_2 = $a->precio_vta2;
-                $prmdet->precio_3 = $a->precio_vta3;
-                $prmdet->precio_4 = $a->precio_vta4;
             }
-            
             //Si es promocion hibirida
             else if($datos['tipo'] == 6){
-                
-                    
-                if($value['emp_cob']!='PZA'){
-                    
-                    if($value['emp_cob']=='CJA'){
-                        $sub_alm=$datos['precBase'].'C';
-                    }if($value['emp_cob']=='PAQ'){
-                        $sub_alm=$datos['precBase'].'M';
-                    }
-    
-    
-                    $fact = DB::table('invars')
-                    ->select(DB::raw('fac_minimo'))
-                    ->where('cve_art', $value['cve'])
-                    ->where('alm', $datos['precBase'])
-                    ->where('sub_alm', $sub_alm)
-                    ->first();
-    
-                    $fac_min=$fact->fac_minimo;
-    
-                    } else{
-                        $fac_min=1;
-                    } 
-                
                 //$prmdet->cve_art = $value['cod_cob'];
                 //$prmdet->des_art = $value['desc_cob'];
                 $prmdet->sin_cargo = 'S';
-                //$prmdet->cobradas = $value['cobradas'];
-                if($value['emp_cob']=='PZA'){
-                    $prmdet->cobradas = $value['cobradas'];
-                }else{
-                    $prmdet->cobradas = $value['cobradas']*$fact->fac_minimo;
-                }
-                
+                $prmdet->cobradas = $value['cobradas'];
                 $prmdet->regaladas = $value['regaladas'];
                 $prmdet->art_reg = $value['cod_reg'];
                 $prmdet->emp_reg = $value['emp_reg'];
@@ -637,13 +576,17 @@ class PromocionController extends Controller
                 $prmdet->desc_reg = $value['desc_reg'];
 
                 //Si precio no esta capturado ponemos el del cat art
-                $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : $value['precio1'];
-                $prmdet->precio_1 = is_null($value['precio2']) ? $a->precio_vta1 : $value['precio2'];
-                $prmdet->precio_2 = is_null($value['precio3']) ? $a->precio_vta2 : $value['precio3'];
-                $prmdet->precio_3 = is_null($value['precio4']) ? $a->precio_vta3 : $value['precio4'];
-                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : $value['precio5'];
+                $prmdet->precio_0 = !array_key_exists('precio1',$value) ? $a->precio_vta0 : $value['precio1'];
+            $prmdet->precio_1 = !array_key_exists('precio2',$value) ? $a->precio_vta1 : $value['precio2'];
+            $prmdet->precio_2 = !array_key_exists('precio3',$value) ? $a->precio_vta2 : $value['precio3'];
+            $prmdet->precio_3 = !array_key_exists('precio4',$value) ? $a->precio_vta3 : $value['precio4'];
+            $prmdet->precio_4 = !array_key_exists('precio5',$value) ? $a->precio_vta4 : $value['precio5'];
             }
+
+
             $prmdet->save();
+
+
         }
 
         DB::commit();
