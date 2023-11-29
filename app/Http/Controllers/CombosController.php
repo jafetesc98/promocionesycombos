@@ -601,7 +601,7 @@ public function creaComboMks(Request $request)
             $det_prom->NPar = str_pad(strval($npar), 4, "0", STR_PAD_LEFT);
             $det_prom->RenExcep = 'N';
             $det_prom->RenEnCombo = str_pad(strval($npar), 2, "0", STR_PAD_LEFT);
-            if($npar==count($articulos)-1){
+            if($k==1){
                 $det_prom->TipoRen = 1;
             }else{
                 $det_prom->TipoRen = 0;
