@@ -99,7 +99,6 @@
                             <br>
                         </td>
                     </tr>
-
                     <tr>
                         <!--<td style="width:15px;" align="center" class="margen"></td>-->
                         <th scope="col" align="center" colspan="2" style="background-color: #ccc">CANTIDAD</th>
@@ -124,7 +123,6 @@
                         <td align="center" colspan="1"><b>{{$arts[$j]['cve_art']}}</b></td>
                         <td align="center" colspan="5"><b>{{$arts[$j]['des_art']}}</b></td>
                         <td align="center"  colspan="2" style="font-size:9px"><b>${{$arts[$j]['cantidad']*$arts[$j]['precio_0']}}</b></td>
-                        
                     </tr>
                 
                     @endfor

@@ -112,8 +112,8 @@ class UserController extends Controller
         $array = array(
                 'usuario' => $userPyc->user_mks,
                 'nombre_lar' => $userPyc->name,
-                //'token' => '',
-                'token' => $userPyc->createToken($userPyc->user_mks)->plainTextToken,
+                'token' => '',
+                //'token' => $userPyc->createToken($userPyc->user_mks)->plainTextToken,
                 'nomCto' => $userPyc->cve_corta,
                 'rol' => $rol,
                 'numcomp' => 1,
