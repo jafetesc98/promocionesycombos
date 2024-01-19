@@ -134,11 +134,17 @@ class PromocionController extends Controller
             //Si es promocion de precio
             if($datos['tipo'] == 1){
                 //Si precio no esta capturado ponemos el del cat art
-                $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : round($value['precio1'], 2);
+                /* $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : round($value['precio1'], 2);
                 $prmdet->precio_1 = is_null($value['precio2']) ? $a->precio_vta1 : round($value['precio2'], 2);
                 $prmdet->precio_2 = is_null($value['precio3']) ? $a->precio_vta2 : round($value['precio3'], 2);
                 $prmdet->precio_3 = is_null($value['precio4']) ? $a->precio_vta3 : round($value['precio4'], 2);
-                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : round($value['precio5'], 2);
+                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : round($value['precio5'], 2); */
+////////////////cambios para precios por almacen 
+                $prmdet->precio_0 = is_null($value['precio1']) ? 0.0 : round($value['precio1'], 2);
+                $prmdet->precio_1 = is_null($value['precio2']) ? 0.0 : round($value['precio2'], 2);
+                $prmdet->precio_2 = is_null($value['precio3']) ? 0.0 : round($value['precio3'], 2);
+                $prmdet->precio_3 = is_null($value['precio4']) ? 0.0 : round($value['precio4'], 2);
+                $prmdet->precio_4 = is_null($value['precio5']) ? 0.0 : round($value['precio5'], 2);
                 
                 $prmdet->sin_cargo = 'N';
                 $prmdet->cobradas = 0.0;
@@ -189,11 +195,18 @@ class PromocionController extends Controller
                 $prmdet->desc_reg = $value['desc_reg'];
 
                 //Si precio no esta capturado ponemos el del cat art
-                $prmdet->precio_0 = $a->precio_vta0;
+                /* $prmdet->precio_0 = $a->precio_vta0;
                 $prmdet->precio_1 = $a->precio_vta1;
                 $prmdet->precio_2 = $a->precio_vta2;
                 $prmdet->precio_3 = $a->precio_vta3;
-                $prmdet->precio_4 = $a->precio_vta4;
+                $prmdet->precio_4 = $a->precio_vta4; */
+
+/////////////////cambio para precios por almacen 
+                $prmdet->precio_0 = 0.0;
+                $prmdet->precio_1 = 0.0;
+                $prmdet->precio_2 = 0.0;
+                $prmdet->precio_3 = 0.0;
+                $prmdet->precio_4 = 0.0;
             }
             
             //Si es promocion hibirida
@@ -530,11 +543,17 @@ class PromocionController extends Controller
             //Si es promocion de precio
             if($datos['tipo'] == 1){
                 //Si precio no esta capturado ponemos el del cat art
-                $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : round($value['precio1'], 2);
+                /* $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : round($value['precio1'], 2);
                 $prmdet->precio_1 = is_null($value['precio2']) ? $a->precio_vta1 : round($value['precio2'], 2);
                 $prmdet->precio_2 = is_null($value['precio3']) ? $a->precio_vta2 : round($value['precio3'], 2);
                 $prmdet->precio_3 = is_null($value['precio4']) ? $a->precio_vta3 : round($value['precio4'], 2);
-                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : round($value['precio5'], 2);
+                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : round($value['precio5'], 2); */
+                ////////////////cambios para precios por almacen 
+                $prmdet->precio_0 = is_null($value['precio1']) ? 0.0 : round($value['precio1'], 2);
+                $prmdet->precio_1 = is_null($value['precio2']) ? 0.0 : round($value['precio2'], 2);
+                $prmdet->precio_2 = is_null($value['precio3']) ? 0.0 : round($value['precio3'], 2);
+                $prmdet->precio_3 = is_null($value['precio4']) ? 0.0 : round($value['precio4'], 2);
+                $prmdet->precio_4 = is_null($value['precio5']) ? 0.0 : round($value['precio5'], 2);
                 
                 $prmdet->sin_cargo = 'N';
                 $prmdet->cobradas = 0.0;
@@ -585,11 +604,18 @@ class PromocionController extends Controller
                 $prmdet->desc_reg = $value['desc_reg'];
 
                 //Si precio no esta capturado ponemos el del cat art
-                $prmdet->precio_0 = $a->precio_vta0;
+               /*  $prmdet->precio_0 = $a->precio_vta0;
                 $prmdet->precio_1 = $a->precio_vta1;
                 $prmdet->precio_2 = $a->precio_vta2;
                 $prmdet->precio_3 = $a->precio_vta3;
-                $prmdet->precio_4 = $a->precio_vta4;
+                $prmdet->precio_4 = $a->precio_vta4; */
+                
+                /////////////////cambio para precios por almacen 
+                $prmdet->precio_0 = 0.0;
+                $prmdet->precio_1 = 0.0;
+                $prmdet->precio_2 = 0.0;
+                $prmdet->precio_3 = 0.0;
+                $prmdet->precio_4 = 0.0;
             }
             
             //Si es promocion hibirida
@@ -636,11 +662,16 @@ class PromocionController extends Controller
                 $prmdet->desc_reg = $value['desc_reg'];
 
                 //Si precio no esta capturado ponemos el del cat art
-                $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : $value['precio1'];
+                /* $prmdet->precio_0 = is_null($value['precio1']) ? $a->precio_vta0 : $value['precio1'];
                 $prmdet->precio_1 = is_null($value['precio2']) ? $a->precio_vta1 : $value['precio2'];
                 $prmdet->precio_2 = is_null($value['precio3']) ? $a->precio_vta2 : $value['precio3'];
                 $prmdet->precio_3 = is_null($value['precio4']) ? $a->precio_vta3 : $value['precio4'];
-                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : $value['precio5'];
+                $prmdet->precio_4 = is_null($value['precio5']) ? $a->precio_vta4 : $value['precio5']; */
+                $prmdet->precio_0 = is_null($value['precio1']) ? 0.0 : $value['precio1'];
+                $prmdet->precio_1 = is_null($value['precio2']) ? 0.0 : $value['precio2'];
+                $prmdet->precio_2 = is_null($value['precio3']) ? 0.0 : $value['precio3'];
+                $prmdet->precio_3 = is_null($value['precio4']) ? 0.0 : $value['precio4'];
+                $prmdet->precio_4 = is_null($value['precio5']) ? 0.0 : $value['precio5'];
             }
             $prmdet->save();
         }
@@ -923,22 +954,62 @@ class PromocionController extends Controller
 
                 $det_prom = new PromocionDetMKS;
 
-                if($promocion_pyc->tpoProm == 6){
+                //if($promocion_pyc->tpoProm == 6){
                     $a = DB::table('invart')
                         ->where('art', $value2['cve_art'])
-                        ->where('alm',$promocion_pyc->suc_prec_base)
+                        //->where('alm',$promocion_pyc->suc_prec_base)
+                        ->where('alm', $value['suc']) ////linea nueva para buscar articulo por cada sucursal
                         ->first();
-                    $det_prom->precio_0 = $a->precio_vta0;
+                                     
+            
+                   /*  $det_prom->precio_0 = $a->precio_vta0;
                     $det_prom->precio_1 = $a->precio_vta1;
                     $det_prom->precio_2 = $a->precio_vta2;
                     $det_prom->precio_3 = $a->precio_vta3;
                     $det_prom->precio_4 = $a->precio_vta4;
-                } else{
+                }  else{
                     $det_prom->precio_0 = $value2['precio_0'];
                     $det_prom->precio_1 = $value2['precio_1'];
                     $det_prom->precio_2 = $value2['precio_2'];
                     $det_prom->precio_3 = $value2['precio_3'];
                     $det_prom->precio_4 = $value2['precio_4'];
+                }  */
+                //return $array;
+                if(is_null($a)){
+                    
+                    if(count($articulos)==1){
+                    $promocionmks = PromocionMKS::where('NumProm',$consec_aplicar)
+                    ->where('alm', $value['suc'])
+                    ->delete();
+                    //$promocionmks->save();
+                    }
+                    continue;
+                }else{
+                if($value2['precio_0']==0){
+                    $det_prom->precio_0 = $a->precio_vta0;
+                }else{
+                    $det_prom->precio_0 = $value2['precio_0'];
+                }
+                if($value2['precio_1']==0){
+                    $det_prom->precio_1 = $a->precio_vta1;
+                }else{
+                    $det_prom->precio_1 = $value2['precio_1'];
+                }
+                if($value2['precio_2']==0){
+                    $det_prom->precio_2 = $a->precio_vta2;
+                }else{
+                    $det_prom->precio_2 = $value2['precio_2'];
+                }
+                if($value2['precio_3']==0){
+                    $det_prom->precio_3 = $a->precio_vta3;
+                }else{
+                    $det_prom->precio_3 = $value2['precio_3'];
+                }
+                if($value2['precio_4']==0){
+                    $det_prom->precio_4 = $a->precio_vta4;
+                }else{
+                    $det_prom->precio_4 = $value2['precio_4'];
+                }
                 }
 
                 $det_prom->ibuff = '     ';
@@ -983,7 +1054,7 @@ class PromocionController extends Controller
 
                 try{
                     $det_prom->save();
-                    ;
+                    
                 }catch(Throwable $e){
                     DB::rollBack();
                     return response()->json(array(
@@ -1016,6 +1087,11 @@ class PromocionController extends Controller
             $consec_aplicar2 = str_pad($consecutivo2->numProm."", 7, "0", STR_PAD_LEFT);
             $consec_aplicar2 = 'P'.$consec_aplicar2;
             foreach ($sucursales as $key => $value) {
+                $a = DB::table('invart')
+                        ->where('art', $value2['cve_art'])
+                        //->where('alm',$promocion_pyc->suc_prec_base)
+                        ->where('alm', $value['suc']) ////linea nueva para buscar articulo por cada sucursal
+                        ->first();
                 $promo = new PromocionMKS;
                 $promo->ibuff = '     ';
                 $promo->cia = 'MAB';
@@ -1080,13 +1156,27 @@ class PromocionController extends Controller
 
                 $npar = 0;
                 foreach ($articulos as $key => $value2) {
+                    /* $a = DB::table('invart')
+                        ->where('art', $value2['cve_art'])
+                        //->where('alm',$promocion_pyc->suc_prec_base)
+                        ->where('alm', $value['suc']) ////linea nueva para buscar articulo por cada sucursal
+                        ->first();
 
                     $det_prom = new PromocionDetMKS;
-                    $det_prom->precio_0 = $value2['precio_0'];
-                    $det_prom->precio_1 = $value2['precio_1'];
-                    $det_prom->precio_2 = $value2['precio_2'];
-                    $det_prom->precio_3 = $value2['precio_3'];
-                    $det_prom->precio_4 = $value2['precio_4'];
+                    if(isnull($a)){
+                        continue;
+                    }else{
+                        $det_prom->precio_0 = $a->precio_vta0;
+                        $det_prom->precio_1 = $a->precio_vta1;
+                        $det_prom->precio_2 = $a->precio_vta2;
+                        $det_prom->precio_3 = $a->precio_vta3;
+                        $det_prom->precio_4 = $a->precio_vta4;
+                    } */
+                    $det_prom->precio_0 = 0.0;
+                    $det_prom->precio_1 = 0.0;
+                    $det_prom->precio_2 = 0.0;
+                    $det_prom->precio_3 = 0.0;
+                    $det_prom->precio_4 = 0.0; 
 
                     $det_prom->ibuff = '     ';
                     $det_prom->cia = 'MAB';
