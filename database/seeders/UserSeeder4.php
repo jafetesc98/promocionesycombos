@@ -16,11 +16,11 @@ class UserSeeder4 extends Seeder
     public function run()
     {
         DB::table('pyc_users')->insert([
-            'name' => 'MARIA ARGELIA LOPEZ ROJAS',
+            'name' => 'REYNA GARCIA GARCIA',
             //'email' => 'admin@miniabastos.mx',
-            'password' => Hash::make('maria'),
-            'user_mks' => 'MARIALR',
-            'cve_corta' => 'MAL'
+            'password' => Hash::make('reyna'),
+            'user_mks' => 'REYNAG',
+            'cve_corta' => 'RGG'
         ]);
     }
 }
