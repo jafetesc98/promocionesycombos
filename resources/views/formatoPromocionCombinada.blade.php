@@ -41,6 +41,8 @@
                             PAGA PROVEEDOR
                             @elseif($prom['paga'] == 2)
                             PAGA MINIABASTOS
+                            @elseif($prom['paga'] == 4)
+                            PAGA MKT
                             @else
                             PAGAN AMBOS
                             @endif

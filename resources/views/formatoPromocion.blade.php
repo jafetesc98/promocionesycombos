@@ -48,6 +48,8 @@
                             PAGA PROVEEDOR
                             @elseif($prom['paga'] == 2)
                             PAGA MINIABASTOS
+                            @elseif($prom['paga'] == 4)
+                            PAGA MKT
                             @else
                             PAGAN AMBOS
                             @endif
@@ -168,7 +170,7 @@
                         <td align="center">{{$arts[$j]['cant_pre1']}}</td>
                         <td align="center">${{number_format($arts[$j]['precio_vta1'], 2, '.', '')}}</td>
                         
-                        @if($arts[$j]['precio_vta1'] != $arts[$j]['precio_1'])
+                        @if($arts[$j]['precio_1'] != 0)
                         <td align="center">${{number_format($arts[$j]['precio_1'], 2, '.', '')}}</td>
                         @else
                         <td align="center">------</td>
