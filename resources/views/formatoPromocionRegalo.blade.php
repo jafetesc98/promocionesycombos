@@ -93,7 +93,15 @@
 
                         <td scope="col" align="center" colspan="2" style="background-color: #ccc">TIPO INDICADOR</td>
                         
-                        <td scope="col" align="center" colspan="3"><?php if($prom['indicador']==0){echo 'BAJA DE PRECIO';}else{echo 'PROMOCION';}; ?></td>
+                        <td scope="col" align="center" colspan="3">
+                            @if($prom['indicador'] == 0)
+                            BAJA DE PRECIO
+                            @elseif($prom['indicador'] == 1)
+                            PROMOCION
+                            @else
+                            CAPAS
+                            @endif
+                        </td>
                         
                         <!--<td style="width:15px;" align="center" class="margen"></td>-->
                     </tr>
